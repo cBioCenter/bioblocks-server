@@ -31,8 +31,10 @@ cd ~/venv
 virtualenv -p python3 bioblockserver
 source ~/venv/bioblockserver/bin/activate
 pip install eve
+pip install requests
 ```
-2. Install mongo
+
+3. Install mongo
 ```
 brew install mongodb
 mkdir -p /data/db
@@ -40,3 +42,10 @@ sudo chown -R `id -un` /data/db
 mongod
 mongo
 ```
+
+4. Install nginx
+```
+brew install nginx
+```
+
+
