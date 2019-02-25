@@ -25,6 +25,11 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 
 vignette_schema = {
+    'uuid': {
+        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
+        'required': True,
+        'type': 'string',
+    },
     'icon': {
         'type': 'string',
         'maxlength': 256,
@@ -44,10 +49,28 @@ vignette_schema = {
         'type': 'string',
         'maxlength': 1024,
         'minlength': 2
+    },
+    'visualizations': {
+        'required': True,
+        'type': 'list',
+        'schema': {
+            'data_relation': {
+                'embeddable': True,
+                'field': 'uuid',
+                'resource': 'visualization',
+            },
+            'required': True,
+            'type': 'string',
+        }
     }
 }
 
 visualization_schema = {
+    'uuid': {
+        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
+        'required': True,
+        'type': 'string',
+    },
     'authors': {
         'required': True,
         'type': 'list',
@@ -138,33 +161,16 @@ visualization_schema = {
         'regex': '^[0-9]+.[0-9]+.[0-9]+$',
         'required': True,
         'type': 'string'
-    },
-    'vignettes': {
-        'required': True,
-        'type': 'list',
-        'schema': {
-            'data_relation': {
-                'embeddable': True,
-                'field': 'link',
-                'resource': 'vignette',
-            },
-            'required': True,
-            'type': 'string',
-        }
-    },
-    'uuid': {
-        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
-        'required': True,
-        'type': 'string',
-    },
+    }
 }
 
 DOMAIN = {
     'visualization': {
+        'id_field': 'uuid',
         'schema': visualization_schema,
     },
     'vignette': {
-        'id_field': 'link',
+        'id_field': 'uuid',
         'schema': vignette_schema,
     },
 }
