@@ -1,4 +1,6 @@
 
+SERVER_NAME = None
+
 # Let's just use the local mongod instance. Edit as needed.
 
 # Please note that MONGO_HOST and MONGO_PORT could very well be left
@@ -22,55 +24,143 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 # individual items  (defaults to read-only item access).
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 
-people = {
-    # 'title' tag used in item links.
-    'item_title': 'person',
-
-    # by default the standard item entry point is defined as
-    # '/people/<ObjectId>/'. We leave it untouched, and we also enable an
-    # additional read-only entry point. This way consumers can also perform GET
-    # requests at '/people/<lastname>/'.
-    'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': 'lastname'
-    },
-
-    # Schema definition, based on Cerberus grammar. Check the Cerberus project
-    # (https://github.com/pyeve/cerberus) for details.
+vignette = {
+    'item_title': 'vignette',
     'schema': {
-        'firstname': {
+        'icon': {
             'type': 'string',
-            'minlength': 1,
-            'maxlength': 10,
+            'maxlength': 256,
+            'minlength': 2
         },
-        'lastname': {
+        'link': {
             'type': 'string',
-            'minlength': 1,
-            'maxlength': 15,
+            'maxlength': 128,
+            'minlength': 2
+        },
+        'name': {
+            'type': 'string',
+            'maxlength': 128,
+            'minlength': 2
+        },
+        'summary': {
+            'type': 'string',
+            'maxlength': 1024,
+            'minlength': 2
+        }
+    }
+}
+
+visualization = {
+    'item_title': 'visualization',
+    'schema': {
+        'authors': {
             'required': True,
-            # talk about hard constraints! For the purpose of the demo
-            # 'lastname' is an API entry-point, so we need it to be unique.
-            'unique': True,
-        },
-        # 'role' is a list, and can only contain values from 'allowed'.
-        'role': {
             'type': 'list',
-            'allowed': ["author", "contributor", "copy"],
-        },
-        # An embedded 'strongly-typed' dictionary.
-        'location': {
-            'type': 'dict',
             'schema': {
-                'address': {'type': 'string'},
-                'city': {'type': 'string'}
+                'type': 'string',
+                'maxlength': 32,
+                'minlength': 1,
+            }
+        },
+        'citations': {
+            'required': True,
+            'type': 'list',
+            'schema': {
+                'schema': {
+                    'fullCitation': {
+                        'type': 'string',
+                        'maxlength': 256,
+                        'minlength': 1,
+                    },
+                    'link': {
+                        'type': 'string',
+                        'maxlength': 256,
+                        'minlength': 1,
+                    },
+                },
+                'type': 'dict',
             },
         },
-        'born': {
-            'type': 'datetime',
+        'compatibleData': {
+            'required': True,
+            'type': 'list',
+            'schema': {
+                'type': 'string',
+                'maxlength': 32,
+                'minlength': 1,
+            }
+        },
+        'isOriginal': {
+            'required': True,
+            'type': 'boolean',
+        },
+        'labels': {
+            'required': False,
+            'type': 'list',
+            'schema': {
+                'type': 'string',
+                'maxlength': 32,
+                'minlength': 1,
+            }
+        },
+        'name': {
+            'maxlength': 64,
+            'minlength': 1,
+            'required': True,
+            'type': 'string'
+        },
+        'repo': {
+            'required': True,
+            'schema': {
+                'lastUpdate': {
+                    'maxlength': 64,
+                    'minlength': 1,
+                    'required': True,
+                    'type': 'string'
+                },
+                'link': {
+                    'maxlength': 64,
+                    'minlength': 1,
+                    'required': True,
+                    'type': 'string'
+                },
+                'version': {
+                    'maxlength': 8,
+                    'minlength': 1,
+                    'required': True,
+                    'type': 'string'
+                },
+            },
+            'type': 'dict',
+        },
+        'summary': {
+            'maxlength': 256,
+            'minlength': 8,
+            'required': True,
+            'type': 'string'
+        },
+        'version': {
+            'regex': '^[0-9]+.[0-9]+.[0-9]+$',
+            'required': True,
+            'type': 'string'
+        },
+        'vignettes': {
+            'required': True,
+            'type': 'list',
+            'schema': {
+                'schema': vignette['schema'],
+                'type': 'dict',
+            }
+        },
+        'uuid': {
+            'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
+            'required': True,
+            'type': 'string',
         },
     }
 }
 
 DOMAIN = {
-    'people': people
+    'visualization': visualization,
+    'vignette': vignette
 }

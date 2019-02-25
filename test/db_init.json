@@ -1,0 +1,30 @@
+{
+    "authors": ["klein", "sander"],
+    "citations": [
+        {
+            "fullCitation": "Weinreb, Caleb, Samuel Wolock, and Allon M. Klein",
+            "link": "https://www.ncbi.nlm.nih.gov/pubmed/29228172"
+        }
+    ],
+    "compatibleData": ["live tSNE", "UMAP", "PCA"],
+    "isOriginal": true,
+    "labels": ["1"],
+    "name": "SPRING",
+    "repo": {
+        "lastUpdate": "2018.03.12",
+        "link": "https://github.com/AllonKleinLab/SPRING_dev",
+        "version": "2.0.0"
+    },
+    "summary": "A collection of pre-processing scripts and a web browser-based tool for visualizing and interacting with high dimensional data.",
+    "version": "0.1.2",
+    "vignettes": [
+        {
+            "icon": "assets/icons/example_hpc_sf2-spring.png",
+            "link": "/dataset?name=hpc_sf2/full&viz=spring",
+            "name": "HPC (hematopoietic progenitor cells)",
+            "summary": "Analysis of 33,473 hematopoietic progenitor cells as they differentiate over 6 days. Barcodes were introduced at day 0 and cell lineage relationships were traced by identifying progeny from their barcodes in scRNAseq of aliquots of the same population taken at several timepoints."
+        }
+    ],
+    "uuid": "12345678-abcd-1234-abcd-a1234567890b"
+
+}
