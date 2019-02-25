@@ -3,7 +3,7 @@
 ## Running (requires installation - see below)
 
 ```python
-source ~/venv/bioblockserver/bin/activate
+source ~/venv/bioblocks-server/bin/activate
 cd INSTALLATION_DIRECTORY
 python src/app.py
 ```
@@ -29,8 +29,8 @@ python src/app.py
    ```sh
    mkdir ~/venv
    cd ~/venv
-   virtualenv -p python3 bioblockserver
-   source ~/venv/bioblockserver/bin/activate
+   virtualenv -p python3 bioblocks-server
+   source ~/venv/bioblocks-server/bin/activate
    pip install eve
    pip install requests
    ```
