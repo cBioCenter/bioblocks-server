@@ -2,17 +2,17 @@
 
 ## Running (requires installation - see below)
 
-```
+```python
 source ~/venv/bioblockserver/bin/activate
 cd INSTALLATION_DIRECTORY
-python bioblocks_server/app.py
+python src/app.py
 ```
-
 
 ## Installation
 
 1. Install homebrew, python3, virtualenv
-```
+
+```python
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew update
 brew doctor
@@ -25,15 +25,18 @@ sudo pip3 install virtualenv
 ```
 
 2. Setup python environment and install python dependencies
-```
+
+```python
 mkdir ~/venv
 cd ~/venv
 virtualenv -p python3 bioblockserver
 source ~/venv/bioblockserver/bin/activate
 pip install eve
 ```
-2. Install mongo
-```
+
+3. Install mongo
+
+```python
 brew install mongodb
 mkdir -p /data/db
 sudo chown -R `id -un` /data/db
