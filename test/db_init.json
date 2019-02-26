@@ -1,5 +1,6 @@
- {
-  "visualizations":[
+{
+  "$schema": "../utils/bioblock_json_schema.json",
+  "visualizations": [
     {
       "uuid": "12345678-abcd-1234-abcd-a1234567890b",
       "authors": ["klein", "sander"],
@@ -20,18 +21,79 @@
       },
       "summary": "A collection of pre-processing scripts and a web browser-based tool for visualizing and interacting with high dimensional data.",
       "version": "0.1.2"
+    },
+    {
+      "uuid": "12345678-efgh-1234-abcd-a1234567890b",
+      "authors": ["Alfonso Muñoz-Pomer Fuentes"],
+      "citations": [],
+      "compatibleData": [],
+      "isOriginal": true,
+      "labels": ["scRNA-seq"],
+      "name": "Anatomogram",
+      "repo": {
+        "lastUpdate": "2018.03.12",
+        "link": "https://github.com/ebi-gene-expression-group/anatomogram",
+        "version": "1.0.0"
+      },
+      "summary": "Interactive anatomical diagram.",
+      "version": "0.0.1"
+    },
+    {
+      "uuid": "12345678-ijkl-1234-abcd-a1234567890b",
+      "authors": ["Yannick Assogba"],
+      "citations": [],
+      "compatibleData": [],
+      "isOriginal": false,
+      "name": "tfjs-tsne",
+      "labels": ["scRNA-seq"],
+      "repo": {
+        "lastUpdate": "2018.03.12",
+        "link": "https://github.com/tensorflow/tfjs-tsne",
+        "version": "1.0.0"
+      },
+      "summary": "Improved tSNE implementation that runs in the browser.",
+      "version": "0.0.1"
     }
   ],
-
-  "vignettes":[
+  "vignettes": [
     {
-      "uuid": "92345678-abcd-1234-abcd-a1234567890b",
+      "uuid": "12345678-mnop-1234-abcd-a1234567890b",
       "icon": "assets/icons/example_hpc_sf2-spring.png",
       "link": "/dataset?name=hpc_sf2/full&viz=spring",
       "name": "HPC (hematopoietic progenitor cells)",
       "summary": "Analysis of 33,473 hematopoietic progenitor cells as they differentiate over 6 days. Barcodes were introduced at day 0 and cell lineage relationships were traced by identifying progeny from their barcodes in scRNAseq of aliquots of the same population taken at several timepoints.",
-      "visualizations":[
-          "12345678-abcd-1234-abcd-a1234567890b"
+      "visualizations": ["12345678-abcd-1234-abcd-a1234567890b"]
+    },
+    {
+      "uuid": "12345678-qrst-1234-abcd-a1234567890b",
+      "icon": "assets/icons/tabula-muris-thumbnail.png",
+      "link": "/dataset?name=tabula_muris/10k&viz=spring",
+      "name": "CZI Tabula muris",
+      "summary": "Analysis of 10K mouse cells from 20 organs and tissues.",
+      "visualizations": ["12345678-abcd-1234-abcd-a1234567890b"]
+    },
+    {
+      "uuid": "12345678-uvwx-1234-abcd-a1234567890b",
+      "icon": "assets/icons/example_tabularmuris_spring-tsne-anatomogram.png",
+      "link": "/dataset?name=tabula_muris/10k&viz=spring&viz=tfjs-tsne&viz=anatomogram",
+      "name": "Tabula Muris - SPRING vs tSNE with Anatomogram",
+      "summary": "Example comparison of data reduction techniques SPRING and tSNE (of top 30 PCA components), on RNAseq profiles from 10000 cells from the CZI Tabula muris dataset. Also includes anatomogram visualization for selection of tissue types.",
+      "visualizations": [
+        "12345678-abcd-1234-abcd-a1234567890b",
+        "12345678-efgh-1234-abcd-a1234567890b",
+        "12345678-ijkl-1234-abcd-a1234567890b"
+      ]
+    },
+    {
+      "uuid": "12345678-yzab-1234-abcd-a1234567890b",
+      "icon": "assets/icons/example_HPC_spring-tsne-anatomogram.png",
+      "link": "/dataset?name=hpc/full&viz=spring&viz=tfjs-tsne&viz=anatomogram",
+      "name": "HPC - SPRING vs tSNE with Anatomogram",
+      "summary": "Example interaction between SPRING, tSNE and Anatomogram visualization on a small dataset.",
+      "visualizations": [
+        "12345678-abcd-1234-abcd-a1234567890b",
+        "12345678-efgh-1234-abcd-a1234567890b",
+        "12345678-ijkl-1234-abcd-a1234567890b"
       ]
     }
   ]

@@ -5,7 +5,7 @@ import requests
 
 URL_ROOT = 'http://localhost:8080/{0}'
 jsonkey_endpoint_dict = {
-    'visualizations': 'visualization', 
+    'visualizations': 'visualization',
     'vignettes': 'vignette'
 }
 
@@ -27,4 +27,4 @@ for jsonkey in jsonkey_endpoint_dict:
             data=json.dumps(obj),
             headers={'Content-type': 'application/json'}
         )
-    
+        print(r.text)
