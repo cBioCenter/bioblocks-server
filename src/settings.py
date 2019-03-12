@@ -1,3 +1,4 @@
+from bb_schema import vignette, visualization
 
 SERVER_NAME = None
 
@@ -24,153 +25,23 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 # individual items  (defaults to read-only item access).
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 
-vignette_schema = {
-    'uuid': {
-        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
-        'required': True,
-        'type': 'string',
-    },
-    'icon': {
-        'type': 'string',
-        'maxlength': 256,
-        'minlength': 2
-    },
-    'link': {
-        'type': 'string',
-        'maxlength': 128,
-        'minlength': 2
-    },
-    'name': {
-        'type': 'string',
-        'maxlength': 128,
-        'minlength': 2
-    },
-    'summary': {
-        'type': 'string',
-        'maxlength': 1024,
-        'minlength': 2
-    },
-    'visualizations': {
-        'required': True,
-        'type': 'list',
-        'schema': {
-            'data_relation': {
-                'embeddable': True,
-                'field': 'uuid',
-                'resource': 'visualization',
-            },
-            'required': True,
-            'type': 'string',
-        }
-    }
-}
+ITEM_URL = 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}")'
 
-visualization_schema = {
-    'uuid': {
-        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
-        'required': True,
-        'type': 'string',
-    },
-    'authors': {
-        'required': True,
-        'type': 'list',
-        'schema': {
-            'type': 'string',
-            'maxlength': 32,
-            'minlength': 1,
-        }
-    },
-    'citations': {
-        'required': True,
-        'type': 'list',
-        'schema': {
-            'schema': {
-                'fullCitation': {
-                    'type': 'string',
-                    'maxlength': 256,
-                    'minlength': 1,
-                },
-                'link': {
-                    'type': 'string',
-                    'maxlength': 256,
-                    'minlength': 1,
-                },
-            },
-            'type': 'dict',
-        },
-    },
-    'compatibleData': {
-        'required': True,
-        'type': 'list',
-        'schema': {
-            'type': 'string',
-            'maxlength': 32,
-            'minlength': 1,
-        }
-    },
-    'isOriginal': {
-        'required': True,
-        'type': 'boolean',
-    },
-    'labels': {
-        'required': False,
-        'type': 'list',
-        'schema': {
-            'type': 'string',
-            'maxlength': 32,
-            'minlength': 1,
-        }
-    },
-    'name': {
-        'maxlength': 64,
-        'minlength': 1,
-        'required': True,
-        'type': 'string'
-    },
-    'repo': {
-        'required': True,
-        'schema': {
-            'lastUpdate': {
-                'maxlength': 64,
-                'minlength': 1,
-                'required': True,
-                'type': 'string'
-            },
-            'link': {
-                'maxlength': 64,
-                'minlength': 1,
-                'required': True,
-                'type': 'string'
-            },
-            'version': {
-                'maxlength': 8,
-                'minlength': 1,
-                'required': True,
-                'type': 'string'
-            },
-        },
-        'type': 'dict',
-    },
-    'summary': {
-        'maxlength': 256,
-        'minlength': 8,
-        'required': True,
-        'type': 'string'
-    },
-    'version': {
-        'regex': '^[0-9]+.[0-9]+.[0-9]+$',
-        'required': True,
-        'type': 'string'
-    }
-}
+# disable default behaviour
+RETURN_MEDIA_AS_BASE64_STRING = False
+MULTIPART_FORM_FIELDS_AS_JSON = True
+
+# return media as URL instead
+RETURN_MEDIA_AS_URL = True
+MEDIA_ENDPOINT = 'media'
 
 DOMAIN = {
     'visualization': {
-        'id_field': 'uuid',
-        'schema': visualization_schema,
+        'id_field': '_id',
+        'schema': visualization.schema,
     },
     'vignette': {
-        'id_field': 'uuid',
-        'schema': vignette_schema,
+        'id_field': '_id',
+        'schema': vignette.schema,
     },
 }
