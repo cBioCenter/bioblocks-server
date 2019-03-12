@@ -25,13 +25,23 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 # individual items  (defaults to read-only item access).
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 
+ITEM_URL = 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}")'
+
+# disable default behaviour
+RETURN_MEDIA_AS_BASE64_STRING = False
+MULTIPART_FORM_FIELDS_AS_JSON = True
+
+# return media as URL instead
+RETURN_MEDIA_AS_URL = True
+MEDIA_ENDPOINT = 'media'
+
 DOMAIN = {
     'visualization': {
-        'id_field': 'uuid',
+        'id_field': '_id',
         'schema': visualization.schema,
     },
     'vignette': {
-        'id_field': 'uuid',
+        'id_field': '_id',
         'schema': vignette.schema,
     },
 }

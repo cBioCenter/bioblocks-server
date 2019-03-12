@@ -5,7 +5,7 @@ import importlib
 from os.path import dirname, basename, isfile
 
 # https://stackoverflow.com/questions/1057431/how-to-load-all-modules-in-a-folder
-moduleFilenames = glob.glob(dirname(__file__)+"/bb_schema/*.py")
+moduleFilenames = glob.glob(dirname(__file__)+"/../src/bb_schema/*.py")
 modules = [basename(f)[:-3] for f in moduleFilenames if isfile(f)
            and not f.endswith('__init__.py')]
 

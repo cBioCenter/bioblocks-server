@@ -10,19 +10,26 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
+          "authors",
           "icon",
           "link",
           "name",
           "summary",
-          "uuid",
+          "_id",
           "visualizations"
         ],
         "properties": {
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "icon": { "type": "string" },
           "link": { "type": "string" },
           "name": { "type": "string" },
           "summary": { "type": "string" },
-          "uuid": { "type": "string" },
+          "_id": { "type": "string" },
           "visualizations": {
             "type": "array",
             "items": {
@@ -41,12 +48,13 @@
           "authors",
           "citations",
           "compatibleData",
+          "icon",
           "isOriginal",
           "labels",
           "name",
           "repo",
           "summary",
-          "uuid",
+          "_id",
           "version"
         ],
         "properties": {
@@ -68,6 +76,7 @@
               "type": "string"
             }
           },
+          "icon": { "type": "string" },
           "isOriginal": { "type": "boolean" },
           "labels": {
             "type": "array",
@@ -75,10 +84,11 @@
               "type": "string"
             }
           },
+          "location": { "type": "string" },
           "name": { "type": "string" },
           "repo": { "$ref": "#/definitions/repo" },
           "summary": { "type": "string" },
-          "uuid": { "type": "string" },
+          "_id": { "type": "string" },
           "version": { "type": "string" }
         }
       }

@@ -1,17 +1,20 @@
 schema = {
-    'uuid': {
-        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
+    '_id': {'type': 'uuid'},
+    'authors': {
         'required': True,
-        'type': 'string',
+        'type': 'list',
+        'schema': {
+            'type': 'string',
+            'maxlength': 32,
+            'minlength': 1,
+        }
     },
     'icon': {
-        'type': 'string',
-        'maxlength': 256,
-        'minlength': 2
+        'type': 'media',
     },
     'link': {
         'type': 'string',
-        'maxlength': 128,
+        'maxlength': 256,
         'minlength': 2
     },
     'name': {
@@ -30,11 +33,11 @@ schema = {
         'schema': {
             'data_relation': {
                 'embeddable': True,
-                'field': 'uuid',
+                'field': '_id',
                 'resource': 'visualization',
             },
             'required': True,
-            'type': 'string',
+            'type': 'uuid',
         }
     }
 }

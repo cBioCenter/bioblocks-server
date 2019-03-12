@@ -1,0 +1,4 @@
+[submodule "files/spring"]
+	path = files/spring
+	url = https://github.com/cBioCenter/SPRING_dev
+	branch = spring-of-rebirth

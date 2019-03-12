@@ -1,9 +1,5 @@
 schema = {
-    'uuid': {
-        'regex': '^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$',
-        'required': True,
-        'type': 'string',
-    },
+    '_id': {'type': 'uuid'},
     'authors': {
         'required': True,
         'type': 'list',
@@ -41,6 +37,9 @@ schema = {
             'minlength': 1,
         }
     },
+    'icon': {
+        'type': 'media'
+    },
     'isOriginal': {
         'required': True,
         'type': 'boolean',
@@ -58,6 +57,12 @@ schema = {
         'maxlength': 64,
         'minlength': 1,
         'required': True,
+        'type': 'string'
+    },
+    'location': {
+        'maxlength': 256,
+        'minlength': 1,
+        'required': False,
         'type': 'string'
     },
     'repo': {
