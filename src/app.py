@@ -22,15 +22,15 @@ def spring_index():
     return send_from_directory(static_folder, 'spring/springViewer.html')
 
 
-@app.route('/{}/datasets/<path:filename>'.format(spring_folder))
+@app.route('/spring/datasets/<path:filename>')
 @app.route('/datasets/<path:filename>')
 def spring_dataset_files(filename):
     return send_from_directory('{}/datasets'.format(static_folder), filename)
 
 
-@app.route('/{}/<path:filename>'.format(spring_folder))
+@app.route('/spring/<path:filename>')
 def spring_files(filename):
-    return send_from_directory('{}/{}'.format(static_folder, spring_folder), filename)
+    return send_from_directory('{}/spring'.format(static_folder), filename)
 
 
 if __name__ == '__main__':

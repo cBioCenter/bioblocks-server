@@ -10,6 +10,7 @@
     "datasets",
     "hematopoietic",
     "muris",
+    "musculus",
     "repo",
     "tfjs",
     "tsne"
