@@ -9,6 +9,15 @@ schema = {
             'minlength': 1,
         }
     },
+    "dataset": {
+        'required': True,
+        'type': 'uuid',
+        'data_relation': {
+            'embeddable': True,
+            'field': '_id',
+            'resource': 'dataset',
+        }
+    },
     'icon': {
         'type': 'media',
     },

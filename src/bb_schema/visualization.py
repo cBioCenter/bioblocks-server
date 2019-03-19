@@ -37,6 +37,10 @@ schema = {
             'minlength': 1,
         }
     },
+    'exampleDataset': {
+        'required': True,
+        'type': 'string'
+    },
     'icon': {
         'type': 'media'
     },

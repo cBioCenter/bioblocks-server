@@ -1,8 +1,22 @@
 {
-  "$schema": "../utils/bioblock_json_schema.json",
+  "$schema": "../utils/bioblocks_json_schema.json",
+  "datasets": [
+    {
+      "_id": "bbdeeded-0000-0000-0001-a1234567890b",
+      "authors": ["Caleb Weinreb", "Samuel Wolock", "Allon Klein"],
+      "name": "Hematopoietic Progenitor Cells",
+      "species": "homo_sapiens"
+    },
+    {
+      "_id": "bbdeeded-0000-0000-0002-a1234567890b",
+      "authors": ["HCA"],
+      "name": "Tabula Muris",
+      "species": "mus_musculus"
+    }
+  ],
   "visualizations": [
     {
-      "_id": "12345678-abcd-1234-abcd-a1234567890b",
+      "_id": "bbfacade-0000-0000-0001-a1234567890b",
       "authors": ["klein", "sander"],
       "citations": [
         {
@@ -11,6 +25,7 @@
         }
       ],
       "compatibleData": ["live tSNE", "UMAP", "PCA"],
+      "exampleDataset": "bbdeeded-0000-0000-0002-a1234567890b",
       "icon": "assets/icons/spring-icon.png",
       "isOriginal": true,
       "labels": ["1"],
@@ -25,10 +40,11 @@
       "version": "0.1.2"
     },
     {
-      "_id": "12345678-dcba-1234-dcba-a1234567890b",
+      "_id": "bbfacade-0000-0000-0002-a1234567890b",
       "authors": ["Alfonso Muñoz-Pomer Fuentes"],
       "citations": [],
       "compatibleData": [],
+      "exampleDataset": "bbdeeded-0000-0000-0002-a1234567890b",
       "icon": "assets/icons/anatomogram-icon.png",
       "isOriginal": true,
       "labels": ["scRNA-seq"],
@@ -42,10 +58,11 @@
       "version": "0.0.1"
     },
     {
-      "_id": "12345678-dcba-1234-abcd-a1234567890b",
+      "_id": "bbfacade-0000-0000-0003-a1234567890b",
       "authors": ["Yannick Assogba"],
       "citations": [],
       "compatibleData": [],
+      "exampleDataset": "bbdeeded-0000-0000-0002-a1234567890b",
       "icon": "assets/icons/tfjs-tsne-icon.png",
       "isOriginal": false,
       "name": "tfjs-tsne",
@@ -61,48 +78,48 @@
   ],
   "vignettes": [
     {
-      "_id": "12345678-1234-1234-1234-a1234567890b",
-      "authors": ["Caleb Weinreb", "Samuel Wolock", "Allon Klein"],
-      "icon": "assets/icons/example_hpc_sf2-spring.png",
-      "link": "/dataset?id=87654321-1234-1234-1234-a1234567890b&viz=12345678-abcd-1234-abcd-a1234567890b",
-      "name": "HPC (hematopoietic progenitor cells)",
-      "summary": "Analysis of 33,473 hematopoietic progenitor cells as they differentiate over 6 days. Barcodes were introduced at day 0 and cell lineage relationships were traced by identifying progeny from their barcodes in scRNAseq of aliquots of the same population taken at several timepoints.",
-      "visualizations": ["12345678-abcd-1234-abcd-a1234567890b"]
-    },
-    {
-      "_id": "12345678-4321-1234-4321-a1234567890b",
-      "authors": ["Drew Diamantoukos", "Nicholas Gauthier"],
-      "icon": "assets/icons/tabula-muris-thumbnail.png",
-      "link": "/dataset?id=87654321-4321-1234-1234-a1234567890b&viz=12345678-abcd-1234-abcd-a1234567890b",
-      "name": "CZI Tabula muris",
-      "summary": "Analysis of 10K mouse cells from 20 organs and tissues.",
-      "visualizations": ["12345678-abcd-1234-abcd-a1234567890b"]
-    },
-    {
-      "_id": "12345678-4321-1234-1234-a1234567890b",
+      "_id": "bbdecade-0000-0000-0001-a1234567890b",
       "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
+      "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
       "icon": "assets/icons/example_tabularmuris_spring-tsne-anatomogram.png",
-      "link": "/dataset?id=87654321-4321-1234-1234-a1234567890b&viz=12345678-abcd-1234-abcd-a1234567890b&viz=12345678-dcba-1234-dcba-a1234567890b&viz=12345678-dcba-1234-abcd-a1234567890b",
       "name": "Tabula Muris - SPRING vs tSNE with Anatomogram",
       "summary": "Example comparison of data reduction techniques SPRING and tSNE (of top 30 PCA components), on RNAseq profiles from 10000 cells from the CZI Tabula muris dataset. Also includes anatomogram visualization for selection of tissue types.",
       "visualizations": [
-        "12345678-abcd-1234-abcd-a1234567890b",
-        "12345678-dcba-1234-dcba-a1234567890b",
-        "12345678-dcba-1234-abcd-a1234567890b"
+        "bbfacade-0000-0000-0001-a1234567890b",
+        "bbfacade-0000-0000-0002-a1234567890b",
+        "bbfacade-0000-0000-0003-a1234567890b"
       ]
     },
     {
-      "_id": "12345678-4321-1234-abcd-a1234567890b",
+      "_id": "bbdecade-0000-0000-0002-a1234567890b",
       "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
+      "dataset": "bbdeeded-0000-0000-0002-a1234567890b",
       "icon": "assets/icons/example_HPC_spring-tsne-anatomogram.png",
-      "link": "/dataset?id=87654321-1234-1234-1234-a1234567890b&viz=12345678-abcd-1234-abcd-a1234567890b&viz=12345678-dcba-1234-dcba-a1234567890b&viz=12345678-dcba-1234-abcd-a1234567890b",
       "name": "HPC - SPRING vs tSNE with Anatomogram",
       "summary": "Example interaction between SPRING, tSNE and Anatomogram visualization on a small dataset.",
       "visualizations": [
-        "12345678-abcd-1234-abcd-a1234567890b",
-        "12345678-dcba-1234-dcba-a1234567890b",
-        "12345678-dcba-1234-abcd-a1234567890b"
+        "bbfacade-0000-0000-0001-a1234567890b",
+        "bbfacade-0000-0000-0002-a1234567890b",
+        "bbfacade-0000-0000-0003-a1234567890b"
       ]
+    },
+    {
+      "_id": "bbdecade-0000-0000-0003-a1234567890b",
+      "authors": ["Caleb Weinreb", "Samuel Wolock", "Allon Klein"],
+      "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
+      "icon": "assets/icons/example_hpc_sf2-spring.png",
+      "name": "HPC (hematopoietic progenitor cells)",
+      "summary": "Analysis of 33,473 hematopoietic progenitor cells as they differentiate over 6 days. Barcodes were introduced at day 0 and cell lineage relationships were traced by identifying progeny from their barcodes in scRNAseq of aliquots of the same population taken at several timepoints.",
+      "visualizations": ["bbfacade-0000-0000-0001-a1234567890b"]
+    },
+    {
+      "_id": "bbdecade-0000-0000-0004-a1234567890b",
+      "authors": ["Drew Diamantoukos", "Nicholas Gauthier"],
+      "dataset": "bbdeeded-0000-0000-0002-a1234567890b",
+      "icon": "assets/icons/tabula-muris-thumbnail.png",
+      "name": "CZI Tabula muris",
+      "summary": "Analysis of 10K mouse cells from 20 organs and tissues.",
+      "visualizations": ["bbfacade-0000-0000-0001-a1234567890b"]
     }
   ]
 }

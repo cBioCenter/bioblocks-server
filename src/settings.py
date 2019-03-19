@@ -1,4 +1,4 @@
-from bb_schema import vignette, visualization
+from bb_schema import vignette, visualization, dataset
 
 SERVER_NAME = None
 
@@ -36,6 +36,10 @@ RETURN_MEDIA_AS_URL = True
 MEDIA_ENDPOINT = 'media'
 
 DOMAIN = {
+    'dataset': {
+        'id_field': '_id',
+        'schema': dataset.schema,
+    },
     'visualization': {
         'id_field': '_id',
         'schema': visualization.schema,
