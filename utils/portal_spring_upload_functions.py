@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+from scipy.io import mmread
 import numpy as np
 import scipy.sparse
-import scipy.io
 import os
 
 
@@ -36,7 +36,8 @@ def load_genes(filename, delimiter='\t', column=0, skip_rows=0):
 def load_mtx(file_data):
     ''' Reads mtx file or, supposedly, an open file object
         Returns scipy.sparse.coo_matrix (if sparse)'''
-    return scipy.io.mmread(file_data).tocsc()
+
+    return mmread(file_data).tocsc()
 
 
 def load_npz(file_data):
