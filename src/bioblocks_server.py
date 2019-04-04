@@ -8,7 +8,8 @@ from flask import Flask, Blueprint, send_from_directory
 from eve import Eve
 from data import UUIDEncoder, UUIDValidator
 
-static_folder = os.path.join(os.environ.get("PWD"), "files")
+static_folder = '{}/../files'.format(
+    os.path.dirname(os.path.abspath(__file__)))
 
 EveApp = Eve(json_encoder=UUIDEncoder.UUIDEncoder,
              validator=UUIDValidator.UUIDValidator, static_folder=static_folder)
@@ -24,6 +25,11 @@ def spring_index():
 @EveApp.route('/datasets/<path:filename>')
 def spring_dataset_files(filename):
     return send_from_directory('{}/datasets'.format(static_folder), filename)
+
+
+@EveApp.route('/spring/cgi-bin/<path:filename>', methods=['GET', 'POST'])
+def spring_cgi_bin(filename):
+    return send_from_directory('{}/spring/cgi-bin/'.format(static_folder), filename)
 
 
 @EveApp.route('/spring/<path:filename>')

@@ -5,7 +5,7 @@
 ```python
 source ~/venv/bioblocks-server/bin/activate
 cd INSTALLATION_DIRECTORY
-python src/app.py
+python src/bioblocks_server.py
 ```
 
 ## Installation

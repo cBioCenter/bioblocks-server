@@ -1,13 +1,34 @@
 schema = {
     '_id': {'type': 'uuid'},
     'authors': {
-        'required': True,
-        'type': 'list',
+        'default': [],
+        'required': False,
         'schema': {
             'type': 'string',
             'maxlength': 32,
             'minlength': 1,
+        },
+        'type': 'list',
+    },
+    'derivedFrom': {
+        'default': [],
+        'required': False,
+        'type': 'list',
+        'schema': {
+            'data_relation': {
+                'embeddable': True,
+                'field': '_id',
+                'resource': 'dataset',
+            },
+            'required': True,
+            'type': 'uuid',
         }
+    },
+    'matrixLocation': {
+        'maxlength': 256,
+        'minlength': 1,
+        'required': False,
+        'type': 'string'
     },
     'name': {
         'maxlength': 64,

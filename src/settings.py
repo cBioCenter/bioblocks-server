@@ -1,4 +1,4 @@
-from bb_schema import vignette, visualization, dataset
+from bb_schema import dataset, job, vignette, visualization
 
 SERVER_NAME = None
 
@@ -40,12 +40,19 @@ DOMAIN = {
         'id_field': '_id',
         'schema': dataset.schema,
     },
-    'visualization': {
+    'job': {
         'id_field': '_id',
-        'schema': visualization.schema,
+        'schema': job.schema,
+    },
+    'spring': {
+        'RESOURCE_METHODS': ['GET', 'POST']
     },
     'vignette': {
         'id_field': '_id',
         'schema': vignette.schema,
+    },
+    'visualization': {
+        'id_field': '_id',
+        'schema': visualization.schema,
     },
 }
