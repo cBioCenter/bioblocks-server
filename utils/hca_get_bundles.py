@@ -21,10 +21,10 @@ urlQuery = parse.urlencode({
     'filters': {'file': {'fileFormat': {'is': ['matrix']}}}
 })
 
+BIOBLOCKS_URL = 'http://localhost:11037/{0}'
+HCA_DSS_URL = 'https://dss.data.humancellatlas.org/v1/search?replica=aws'
 HCA_PROJECT_URL = 'https://service.explore.data.humancellatlas.org/repository/projects?{}'.format(
     urlQuery)
-
-BIOBLOCKS_URL = 'http://localhost:11037/{0}'
 
 response = session.get(
     url=HCA_PROJECT_URL,
@@ -68,9 +68,6 @@ def write_bundle_results(results, file, full_file):
             bundle_id, bundle_version))
 
 
-HCA_DSS_URL = 'https://dss.data.humancellatlas.org/v1/search?replica=aws'
-
-
 def create_directory(new_dir):
     os.mkdir(new_dir)
     print('Created new directory \'{}\''.format(new_dir))
@@ -90,8 +87,6 @@ def create_dataset(_id, name, derived_from):
 
 
 def write_specimen_file(specimen_id, project_short_name, output_dir, full_file, entry_id):
-    print('started writing results file for specimen {} in project {}'.format(
-        specimen_id, sanitized_short_name))
     r = session.post(
         url=HCA_DSS_URL,
         data=json.dumps(generate_es_query(
@@ -128,27 +123,29 @@ def write_specimen_file(specimen_id, project_short_name, output_dir, full_file, 
     print('finished writing results file {}'.format(project_short_name))
 
 
-hits = json.loads(response.text)['hits'][1:2]
+def start_getting_bundles():
+    hits = json.loads(response.text)['hits'][1:2]
 
-for hit in hits:
-    entry_id = hit['entryId']
-    projects = hit['projects']
-    specimens = hit['specimens']
+    for hit in hits:
+        entry_id = hit['entryId']
+        projects = hit['projects']
+        specimens = hit['specimens']
 
-    output_dir = '{}/files/datasets'.format(path)
+        output_dir = '{}/files/datasets'.format(path)
 
-    for project in projects:
-        short_name = project['projectShortname']
-        sanitized_short_name = short_name.replace(
-            '/', '_').replace(' ', '_').lower()
+        for project in projects:
+            short_name = project['projectShortname']
 
-        create_directory('{}/{}'.format(output_dir, entry_id))
-        create_dataset(entry_id, 'full', [])
+            create_directory('{}/{}'.format(output_dir, entry_id))
+            create_dataset(entry_id, 'full', [])
 
-        with open('{}/{}/full_fqids.tsv'.format(output_dir, entry_id), 'w') as full_file:
-            for specimen in specimens:
-                print(specimen)
-                ids = specimen['id']
-                for specimen_id in ids[0:1]:
-                    write_specimen_file(
-                        specimen_id, short_name, output_dir, full_file, entry_id)
+            with open('{}/{}/full_fqids.tsv'.format(output_dir, entry_id), 'w') as full_file:
+                for specimen in specimens:
+                    print(specimen)
+                    ids = specimen['id']
+                    for specimen_id in ids[0:1]:
+                        write_specimen_file(
+                            specimen_id, short_name, output_dir, full_file, entry_id)
+
+
+start_getting_bundles()

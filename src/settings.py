@@ -1,4 +1,4 @@
-from bb_schema import dataset, job, vignette, visualization
+from bb_schema import analysis, dataset, job, vignette, visualization
 
 SERVER_NAME = None
 
@@ -36,6 +36,10 @@ RETURN_MEDIA_AS_URL = True
 MEDIA_ENDPOINT = 'media'
 
 DOMAIN = {
+    'analysis': {
+        'id_field': '_id',
+        'schema': analysis.schema,
+    },
     'dataset': {
         'id_field': '_id',
         'schema': dataset.schema,
