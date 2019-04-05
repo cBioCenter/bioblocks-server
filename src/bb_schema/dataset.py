@@ -1,5 +1,19 @@
 schema = {
     '_id': {'type': 'uuid'},
+    'analyses': {
+        'default': [],
+        'required': False,
+        'type': 'list',
+        'schema': {
+            'data_relation': {
+                'embeddable': True,
+                'field': '_id',
+                'resource': 'analysis',
+            },
+            'required': True,
+            'type': 'uuid',
+        }
+    },
     'authors': {
         'default': [],
         'required': False,

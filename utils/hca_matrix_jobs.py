@@ -26,7 +26,7 @@ def days_between_dates(date1, date2):
 
 
 def create_bioblocks_job(request_id, dataset):
-    print('Creating bioblocks job with request_id=\'{}\''.format(request_id))
+    print('POSTing bioblocks job with request_id=\'{}\''.format(request_id))
     r = session.post(
         url=bioblocks_local_url.format('job'),
         data=json.dumps({
@@ -47,7 +47,7 @@ def create_bioblocks_job(request_id, dataset):
 
 
 def patch_dataset_for_job(request_id, result_location, associated_dataset):
-    print('Patching bioblocks job with request_id=\'{}\''.format(request_id))
+    print('PATCHing bioblocks job with request_id=\'{}\''.format(request_id))
     r = session.patch(
         url='{}/{}'.format(bioblocks_local_url.format('dataset'),
                            associated_dataset['dataset']),
@@ -68,7 +68,7 @@ def patch_dataset_for_job(request_id, result_location, associated_dataset):
 def delete_bioblocks_job(job):
     job_id = job['_id']
     etag = job['_etag']
-    print('Deleting bioblocks job with request_id=\'{}\''.format(job_id))
+    print('DELETE-ing bioblocks job with request_id=\'{}\''.format(job_id))
     r = session.delete(
         url='{}/{}'.format(bioblocks_local_url.format('job'), job_id),
         timeout=None,
@@ -101,7 +101,7 @@ def handle_hca_matrix_job_status(job):
 def send_hca_matrix_job_request(dataset):
     bundle_fqids_url = '{}/datasets/{}/{}_fqids.tsv'.format(bioblocks_public_url,
                                                             dataset['_id'], dataset['name'])
-    print('Sending matrix job with bundle_fqid_url=\'{}\''.format(bundle_fqids_url))
+    print('POSTing matrix job with bundle_fqid_url=\'{}\''.format(bundle_fqids_url))
     r = session.post(
         url=matrix_service_url,
         data=json.dumps({
