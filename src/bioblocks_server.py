@@ -1,9 +1,6 @@
-import logging.config
-
 import os
-import sys
 from flask_cors import CORS
-from flask import Flask, Blueprint, send_from_directory
+from flask import send_from_directory
 
 from eve import Eve
 from data import UUIDEncoder, UUIDValidator

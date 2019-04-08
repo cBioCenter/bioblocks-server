@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[packages]
+uwsgi = "*"
+flask-cors = "*"
+flask = "*"
+eve = "*"
+requests = "*"
+
+[dev-packages]
+flake8 = "*"
+flake8-quotes = "*"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+lint = "flake8 ."

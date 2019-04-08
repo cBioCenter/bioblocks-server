@@ -6,7 +6,7 @@ import socket
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-RFC_1123_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+RFC_1123_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
 MAX_DAYS_JOB_KEEP_ALIVE = 1
 
 session = requests.Session()
@@ -42,7 +42,7 @@ def create_bioblocks_job(request_id, dataset):
         timeout=None
     )
     print('Returned status from bioblocks job: {}'.format(r.status_code))
-    if r.ok == False:
+    if r.ok is False:
         print(r.text)
 
 
@@ -59,7 +59,7 @@ def patch_dataset_for_job(request_id, result_location, associated_dataset):
         timeout=None
     )
     print('Returned status from bioblocks job: {}'.format(r.status_code))
-    if r.ok == False:
+    if r.ok is False:
         print(r.text)
     else:
         return json.loads(r.text)['_etag']
@@ -114,9 +114,10 @@ def send_hca_matrix_job_request(dataset):
     print('Returned status from matrix service: {}'.format(r.status_code))
     result = json.loads(r.text)
     request_id = result['request_id']
+    associated_dataset = {'dataset': dataset['_id'], 'etag': dataset['_etag']}
     if result['status'] == 'In Progress':
         dataset['_etag'] = patch_dataset_for_job(
-            request_id, 'IN_PROGRESS - CHECK JOB {}'.format(request_id), {'dataset': dataset['_id'], 'etag': dataset['_etag']})
+            request_id, 'IN_PROGRESS - CHECK JOB {}'.format(request_id), associated_dataset)
         create_bioblocks_job(request_id, dataset)
     else:
         print('Unhandled status \'{}\' from matrix service.'.format(

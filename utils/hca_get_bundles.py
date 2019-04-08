@@ -34,20 +34,20 @@ response = session.get(
 
 def generate_es_query(shortName, sampleId):
     return {
-        "es_query": {
-            "query": {
-                "bool": {
-                    "must": [{
-                        "match": {
-                            "files.project_json.project_core.project_short_name": shortName
+        'es_query': {
+            'query': {
+                'bool': {
+                    'must': [{
+                        'match': {
+                            'files.project_json.project_core.project_short_name': shortName
                         }
                     }, {
-                        "match": {
-                            "files.analysis_process_json.process_type.text": "analysis"
+                        'match': {
+                            'files.analysis_process_json.process_type.text': 'analysis'
                         }
                     }, {
-                        "match": {
-                            "files.specimen_from_organism_json.biomaterial_core.biomaterial_id": sampleId
+                        'match': {
+                            'files.specimen_from_organism_json.biomaterial_core.biomaterial_id': sampleId
                         }
                     }]
                 }
@@ -124,7 +124,7 @@ def write_specimen_file(specimen_id, project_short_name, output_dir, full_file, 
 
 
 def start_getting_bundles():
-    hits = json.loads(response.text)['hits'][1:2]
+    hits = json.loads(response.text)['hits']  # [1:2]
 
     for hit in hits:
         entry_id = hit['entryId']

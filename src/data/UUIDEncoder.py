@@ -8,8 +8,7 @@ class UUIDEncoder(BaseJSONEncoder):
     encoding of UUID
     """
 
-    # https://github.com/PyCQA/pylint/issues/414
-    def default(self, obj):  # pylint: disable=E0202
+    def default(self, obj):
         if isinstance(obj, UUID):
             return str(obj)
         else:

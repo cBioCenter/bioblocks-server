@@ -1,0 +1,16 @@
+[flake8]
+ignore = D203
+exclude =
+    .git,
+    .venv,
+    .vscode,
+    __pycache__,
+    assets,
+    dist,
+    files,
+    utils/portal_spring_helper.py,
+    utils/portal_spring_upload_functions.py,
+    utils/spring_load_preprocess.py,
+
+max-complexity = 10
+max-line-length = 120
