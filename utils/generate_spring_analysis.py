@@ -8,7 +8,7 @@ import zipfile
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-RFC_1123_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+RFC_1123_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
 MAX_DAYS_JOB_KEEP_ALIVE = 1
 
 session = requests.Session()
@@ -32,7 +32,7 @@ def post_bioblocks_analysis(analysis_id, process_type):
         timeout=None
     )
     print('Returned status from bioblocks analysis request: {}'.format(r.status_code))
-    if r.ok == False:
+    if r.ok is False:
         print(r.text)
     else:
         return json.loads(r.text)['_etag']
@@ -55,7 +55,7 @@ def patch_analysis_for_dataset(dataset, analysis_id):
         timeout=None
     )
     print('Returned status from dataset PATCH: {}'.format(r.status_code))
-    if r.ok == False:
+    if r.ok is False:
         print(r.text)
     else:
         return json.loads(r.text)['_etag']
@@ -64,7 +64,7 @@ def patch_analysis_for_dataset(dataset, analysis_id):
 def analyze_dataset(dataset, dataset_dir):
     dataset_analyses = dataset['analyses']
     matrix_location = dataset['matrixLocation']
-    if (matrix_location.endswith('.zip') == False and matrix_location.endswith('mtx') == False):
+    if (matrix_location.endswith('.zip') is False and matrix_location.endswith('mtx') is False):
         print('Dataset \'{}\' has a invalid matrix location: {}'.format(
             dataset['_id'], matrix_location))
         return

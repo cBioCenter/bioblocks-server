@@ -1,4 +1,3 @@
-import io
 import json
 import numpy as np
 import os
@@ -9,7 +8,6 @@ import uuid
 
 from MulticoreTSNE import MulticoreTSNE as TSNE
 from requests.adapters import HTTPAdapter
-from sklearn.decomposition import PCA
 from urllib3.util.retry import Retry
 
 session = requests.Session()
@@ -33,7 +31,7 @@ def post_bioblocks_analysis(analysis_id, process_type):
         timeout=None
     )
     print('Returned status from bioblocks analysis request: {}'.format(r.status_code))
-    if r.ok == False:
+    if r.ok is False:
         print(r.text)
     else:
         return json.loads(r.text)['_etag']
@@ -58,7 +56,7 @@ def patch_analysis_for_dataset(dataset, analysis_id):
         timeout=None
     )
     print('Returned status from dataset PATCH: {}'.format(r.status_code))
-    if r.ok == False:
+    if r.ok is False:
         print(r.text)
     else:
         return json.loads(r.text)['_etag']
@@ -86,7 +84,7 @@ def analyze_dataset(dataset):
     output_dir = 'files/datasets/{}/analyses/{}'.format(
         dataset['_id'], analysis_id)
     os.mkdir(output_dir)
-    np.savetxt('{}/tsne_matrix.csv'.format(output_dir), Y, delimiter=",")
+    np.savetxt('{}/tsne_matrix.csv'.format(output_dir), Y, delimiter=',')
 
     post_bioblocks_analysis(analysis_id, 'TSNE')
     patch_analysis_for_dataset(dataset, analysis_id)

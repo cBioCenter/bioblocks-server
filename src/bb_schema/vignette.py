@@ -9,7 +9,7 @@ schema = {
             'minlength': 1,
         }
     },
-    "dataset": {
+    'dataset': {
         'required': True,
         'type': 'uuid',
         'data_relation': {

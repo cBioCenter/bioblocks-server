@@ -1,5 +1,4 @@
 #!/usr/local/bin/python
-import base64
 import json
 import requests
 
@@ -22,7 +21,7 @@ for jsonkey in jsonkey_endpoint_dict:
         len(objects), jsonkey, endpoint
     ))
 
-    '''
+    """
     for obj in objects:
         if 'icon' in obj:
             with open(obj['icon'], 'rb') as icon:
@@ -37,7 +36,7 @@ for jsonkey in jsonkey_endpoint_dict:
             headers={'Content-type': 'application/json'}
         )
         print(r.text)
-    '''
+    """
     for obj in objects:
         if 'icon' in obj:
             icon = obj.pop('icon', None)
