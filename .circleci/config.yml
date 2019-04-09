@@ -31,12 +31,3 @@ jobs:
           name: Coverage Report
           command: |
             pipenv run coverage
-      - store_test_results:
-          name: Store Test Results
-          path: test-results
-      - store_artifacts:
-          name: Store Test Artifacts
-          path: test-results
-          destination: tr1
-
-            
