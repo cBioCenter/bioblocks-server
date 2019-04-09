@@ -14,9 +14,12 @@ requests = "*"
 flake8 = "*"
 flake8-quotes = "*"
 coverage = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
+ci_test = "pytest --junitxml=dist/test-reports/junit.xml --disable-warnings --cov=src --cov-report xml:dist/cov.xml"
 lint = "flake8 ."
+test = "pytest --disable-warnings --cov=src --cov-report xml:dist/cov.xml"

@@ -4,6 +4,7 @@ jobs:
     working_directory: ~/bioblocks-server
     docker:
       - image: circleci/python:3.7
+      - image: circleci/mongo:4.0.3
         environment:
           PIPENV_VENV_IN_PROJECT: "1"
     steps:
@@ -28,6 +29,10 @@ jobs:
           command: |
             pipenv run lint
       - run:
-          name: Coverage Report
+          name: Tests
           command: |
-            pipenv run coverage
+            pipenv run ci_test
+      - store_test_results:
+          path: dist/test-reports
+      - store_artifacts:
+          path: dist/test-reports    

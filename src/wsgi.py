@@ -1,4 +1,4 @@
-from bioblocks_server import EveApp as application
+from bioblocks_server import create_app
 
 if __name__ == '__main__':
-    application.run()
+    create_app().run()
