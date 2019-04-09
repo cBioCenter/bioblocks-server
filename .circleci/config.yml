@@ -7,6 +7,8 @@ jobs:
       - image: circleci/mongo:4.0.3
         environment:
           PIPENV_VENV_IN_PROJECT: "1"
+    environment:
+      CODECOV_TOKEN: "2b7b2dd7-ef0c-4855-8a71-64179b0dc57b"
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
