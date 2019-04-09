@@ -31,9 +31,9 @@ jobs:
           command: |
             pipenv run lint
       - run:
-          name: Tests
+          name: Tests and Coverage
           command: |
-            pipenv run ci_test
+            pipenv run ci_test ; pipenv run codecov
       - store_test_results:
           path: dist/test-reports
       - store_artifacts:
