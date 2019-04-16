@@ -1,12 +1,12 @@
 import os
 import sys
 
-from .settings import get_bioblocks_settings
 from eve import Eve
-from flask_cors import CORS
 from flask import request, Response, send_from_directory
+from flask_cors import CORS
 from os.path import dirname
-from .data import UUIDEncoder, UUIDValidator
+from src import settings
+from src.data import UUIDEncoder, UUIDValidator
 
 static_folder = '{}/../files'.format(
     os.path.dirname(os.path.abspath(__file__)))
@@ -51,7 +51,7 @@ def handle_spring_cgi(filename):
         return Response(exec_cgi_script())
 
 
-def create_app(settings=get_bioblocks_settings()):
+def create_app(settings=settings.get_bioblocks_settings()):
     EveApp = Eve(json_encoder=UUIDEncoder.UUIDEncoder, settings=settings,
                  static_folder=static_folder, validator=UUIDValidator.UUIDValidator)
     CORS(EveApp)
