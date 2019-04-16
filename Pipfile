@@ -17,6 +17,7 @@ matplotlib = "*"
 fa2 = "*"
 networkx = "*"
 python-louvain = "*"
+cmake = "*"
 multicoretsne = "*"
 
 [dev-packages]
