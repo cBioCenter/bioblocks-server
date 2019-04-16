@@ -17,8 +17,9 @@ jobs:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: |
-            sudo pip install --user pipenv
-            pipenv install -d
+            sudo apt-get update && sudo apt-get install -y cmake &&
+            sudo pip install --user pipenv &&
+            pipenv install -d &&
             pipenv sync
       - save_cache:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
