@@ -1,4 +1,4 @@
-from bb_schema import analysis, dataset, job, vignette, visualization
+from .bb_schema import analysis, dataset, job, vignette, visualization
 
 settings = {
     'SERVER_NAME': None,
