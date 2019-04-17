@@ -7,6 +7,7 @@ import zipfile
 
 from bioblocks_logger import bioblocks_log
 from bioblocks_server_api_helper import post_bioblocks_analysis, send_get, send_patch
+from datetime import datetime
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -53,7 +54,7 @@ def analyze_dataset(dataset, dataset_dir):
             return
 
     analysis_id = str(uuid.uuid4())
-
+    start_time = datetime.utcnow()
     bioblocks_log('Starting SPRING analysis \'{}\' for dataset \'{}\''.format(
         analysis_id, dataset['_id']))
 
@@ -73,8 +74,9 @@ def analyze_dataset(dataset, dataset_dir):
         main_dir='{}/analyses/{}'.format(dataset_dir, analysis_id),
         subplot_name=dataset['name']
     )
-    bioblocks_log('Finished SPRING analysis \'{}\' for dataset \'{}\''.format(
-        analysis_id, dataset['_id']))
+    end_time = datetime.utcnow()
+    bioblocks_log('Finished SPRING analysis \'{}\' for dataset \'{}\'. Duration: {}'.format(
+        analysis_id, dataset['_id'], end_time - start_time))
 
     post_bioblocks_analysis(analysis_id, 'SPRING')
     patch_analysis_for_dataset(dataset, analysis_id)

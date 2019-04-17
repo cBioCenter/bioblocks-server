@@ -8,6 +8,7 @@ import uuid
 
 from bioblocks_server_api_helper import post_bioblocks_analysis, send_get, send_patch
 from bioblocks_logger import bioblocks_log
+from datetime import datetime
 from MulticoreTSNE import MulticoreTSNE as TSNE
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -76,6 +77,7 @@ def analyze_dataset(dataset):
         return
 
     analysis_id = str(uuid.uuid4())
+    start_time = datetime.utcnow()
     bioblocks_log('Starting TensorFlow T-SNE analysis \'{}\' for dataset \'{}\''.format(
         analysis_id, dataset_id))
 
@@ -89,8 +91,9 @@ def analyze_dataset(dataset):
     tsne = TSNE(n_jobs=4)
     Y = tsne.fit_transform(data)
 
-    bioblocks_log('Finished TensorFlow T-SNE analysis \'{}\' for dataset \'{}\''.format(
-        analysis_id, dataset_id))
+    end_time = datetime.utcnow()
+    bioblocks_log('Finished TensorFlow T-SNE analysis \'{}\' for dataset \'{}\'. Duration: {}'.format(
+        analysis_id, dataset_id, end_time - start_time))
 
     output_dir = create_analysis_directory('files/datasets/{}'.format(dataset_id), analysis_id)
 
