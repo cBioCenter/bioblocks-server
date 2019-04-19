@@ -18,6 +18,7 @@ fa2 = "*"
 networkx = "*"
 python-louvain = "*"
 multicoretsne = "*"
+urllib3 = "*"
 
 [dev-packages]
 flake8 = "*"

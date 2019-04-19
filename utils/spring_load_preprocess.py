@@ -5,6 +5,7 @@ import os
 import json
 import numpy as np
 
+from bioblocks_logger import bioblocks_log
 from portal_spring_helper import *
 import portal_spring_upload_functions as up
 
@@ -37,6 +38,7 @@ def run_spring_preprocessing(
     n_neighbors=5,
     n_prin_comps=30,
     n_force_iter=500,
+    MAX_CELLS_COUNT=50000,
 ):
 
     #========================================================================================#
@@ -46,6 +48,15 @@ def run_spring_preprocessing(
     gene_sets = {}
     subplot_dir = '{}/{}'.format(main_dir, subplot_name)
 
+    bioblocks_log('SPRING parameters: \n\
+        \'mtx_file\': {}\n\
+        \'gene_file\': {}\n\
+        \'cell_labels_file\': {}\n\
+        \'main_dir\': {}\n\
+        \'subplot_name\': {}\n\
+        \'subplot_dir\': {}'
+                  .format(mtx_file, gene_file, cell_labels_file, main_dir, subplot_dir, subplot_dir))
+
     #========================================================================================#
     # LOAD DATA
 
@@ -54,10 +65,18 @@ def run_spring_preprocessing(
     E = up.load_mtx(mtx_file)
     gene_list = load_genes(gene_file, delimiter=None)
 
+    num_rows = E.shape[0]
+
+    if num_rows >= MAX_CELLS_COUNT:
+        bioblocks_log('Not running SPRING - # of cells is {}, maximum allowed is {}'.format(num_rows, MAX_CELLS_COUNT))
+        return
+    else:
+        bioblocks_log('Running SPRING - # of cells is {}'.format(num_rows))
+
     # Find dimension of counts matrix that matches number of genes.
     # If necessary, transpose counts matrix with
     # rows=cells and columns=genes.
-    if E.shape[0] == len(gene_list):
+    if num_rows == len(gene_list):
         E = E.T.tocsc()
 
     # Deal with gene names that are empty strings by removing them

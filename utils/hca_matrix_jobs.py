@@ -90,7 +90,7 @@ def handle_hca_matrix_job_status(job):
 def send_hca_matrix_job_request(dataset):
     bundle_fqids_url = '{}/datasets/{}/{}_fqids.tsv'.format(tsv_public_url,
                                                             dataset['_id'], dataset['name'])
-    bioblocks_log('POSTing matrix job with bundle_fqid_url=\'{}\''.format(bundle_fqids_url))
+    bioblocks_log('POST-ing matrix job with bundle_fqid_url=\'{}\''.format(bundle_fqids_url))
     r = session.post(
         url=matrix_service_url,
         data=json.dumps({
@@ -140,6 +140,8 @@ def check_bioblocks_jobs():
                                               datetime.datetime.strptime(started, RFC_1123_FORMAT))
             if job_age_days >= MAX_DAYS_JOB_KEEP_ALIVE:
                 delete_bioblocks_job(job)
+            else:
+                bioblocks_log('Not deleting job \'{}\', less than {} days old'.format(job_id, MAX_DAYS_JOB_KEEP_ALIVE))
         except Exception as e:
             print('Exception checking job id \'{}\': {}'.format(job_id, e))
 
