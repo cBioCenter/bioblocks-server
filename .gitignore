@@ -3,6 +3,7 @@
 .pytest_cache*
 *.pyc
 .vscode/.ropeproject/objectdb
+bioblocks_cron_log_*
 
 dist
 files/datasets

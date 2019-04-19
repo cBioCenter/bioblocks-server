@@ -127,13 +127,13 @@ def start_getting_bundles(args):
         timeout=None
     )
     hits = json.loads(response.text)['hits']
+    output_dir = '{}/files/datasets'.format(path)
+    bioblocks_log('Using output_dir: \'{}\''.format(output_dir))
 
     for hit in hits:
         entry_id = hit['entryId']
         projects = hit['projects']
         specimens = hit['specimens']
-
-        output_dir = '{}/files/datasets'.format(path)
 
         for project in projects:
             short_name = project['projectShortname']
@@ -146,7 +146,7 @@ def start_getting_bundles(args):
                     for specimen in specimens:
                         bioblocks_log(specimen)
                         ids = specimen['id']
-                        for specimen_id in ids[0:1]:
+                        for specimen_id in ids:
                             write_specimen_file(
                                 specimen_id, short_name, output_dir, full_file, entry_id)
             else:
