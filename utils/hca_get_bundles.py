@@ -30,26 +30,20 @@ HCA_PROJECT_URL = 'https://service.explore.data.humancellatlas.org/repository/pr
 
 
 def derive_es_query_match_field(match_key):
-    if match_key == 'id':
-        return 'files.specimen_from_organism_json.biomaterial_core.biomaterial_id'
-    elif match_key == 'genusSpecies':
-        return 'files.cell_suspension_json.genus_species.text'
-    elif match_key == 'organ':
-        return 'files.specimen_from_organism_json.organ.text'
-    elif match_key == 'organPart':
-        return 'files.specimen_from_organism_json.organ_part.text'
-    elif match_key == 'organismAge':
-        return 'files.donor_organism_json.organism_age'
-    elif match_key == 'organismAgeUnit':
-        return 'files.donor_organism_json.organism_age_unit.text'
-    elif match_key == 'biologicalSex':
-        return 'files.donor_organism_json.sex'
-    elif match_key == 'disease':
-        return 'files.donor_organism_json.diseases.text'
-    elif match_key == 'preservationMethod':
-        return 'files.specimen_from_organism_json.preservation_storage.preservation_method'
-    elif match_key == 'source':
-        return 'files.library_preparation_protocol_json.nucleic_acid_source'
+    match_dict = {
+        'id': 'files.specimen_from_organism_json.biomaterial_core.biomaterial_id',
+        'genusSpecies': 'files.cell_suspension_json.genus_species.text',
+        'organ': 'files.specimen_from_organism_json.organ.text',
+        'organPart': 'files.specimen_from_organism_json.organ_part.text',
+        'organismAge': 'files.donor_organism_json.organism_age',
+        'biologicalSex': 'files.donor_organism_json.sex',
+        'disease': 'files.donor_organism_json.diseases.text',
+        'preservationMethod': 'files.specimen_from_organism_json.preservation_storage.preservation_method',
+        'source': 'files.library_preparation_protocol_json.nucleic_acid_source'
+    }
+
+    if match_key in match_dict:
+        return match_dict[match_key]
     else:
         bioblocks_log('Unhandled specimen field \'{}\'!'.format(match_key))
         return match_key
