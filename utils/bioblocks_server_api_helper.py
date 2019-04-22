@@ -25,7 +25,7 @@ def send_delete(endpoint, headers, timeout=None):
     url = bioblocks_api_url.format(endpoint)
     time.sleep(4)
     bioblocks_log('Sending DELETE to \'{}\''.format(url))
-    return session.patch(
+    return session.delete(
         url=url,
         headers=headers,
         timeout=timeout,

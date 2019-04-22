@@ -2,15 +2,13 @@
 
 ## Running (requires installation - see below)
 
-```python
-source ~/venv/bioblocks-server/bin/activate
-cd INSTALLATION_DIRECTORY
-python src/bioblocks_server.py
+```sh
+pipenv run start
 ```
 
 ## Installation
 
-1. Install homebrew, python3, virtualenv
+1. Install homebrew, python3, pipenv, circleci
 
    ```sh
    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -20,19 +18,13 @@ python src/bioblocks_server.py
    brew cleanup && brew cask cleanup
    sudo easy_install pip
    pip install --upgrade pip
-   brew install python3
-   sudo pip3 install virtualenv
+   brew install python3 pipenv circleci
    ```
 
 2. Setup python environment and install python dependencies
 
    ```sh
-   mkdir ~/venv
-   cd ~/venv
-   virtualenv -p python3 bioblocks-server
-   source ~/venv/bioblocks-server/bin/activate
-   pip install eve
-   pip install requests
+   pipenv install
    ```
 
 3. Install mongo
@@ -49,4 +41,10 @@ python src/bioblocks_server.py
 
    ```sh
    brew install nginx
+   ```
+
+5. Running CI/CD Tests locally
+
+   ```sh
+   circleci local execute --job build
    ```
