@@ -71,7 +71,7 @@ def send_post(endpoint, data, headers={'Content-type': 'application/json'}, time
 
 
 def post_bioblocks_analysis(analysis_id, process_type):
-    bioblocks_log('POSTing analysis with analysis_id=\'{}\''.format(analysis_id))
+    bioblocks_log('Creating analysis with analysis_id=\'{}\''.format(analysis_id))
     r = send_post('analysis', json.dumps({
         '_id': analysis_id,
         'processType': process_type,
