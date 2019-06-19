@@ -103,26 +103,9 @@ def create_dataset(_id, name, derived_from):
     bioblocks_log(r.text)
 
 
-def write_specimen_file(specimen_field, specimen_value, project_short_name, output_dir, entry_id):
-    bioblocks_log('Writing specimen file \'{}\''.format(specimen_value))
-    r = session.post(
-        url=HCA_DSS_URL,
-        data=json.dumps(generate_es_query(
-            project_short_name, specimen_field, specimen_value)),
-        headers={'Content-type': 'application/json'},
-        timeout=None,
-    )
-    time.sleep(5)
-    results = json.loads(r.text)['results']
-    if len(results) == 0:
-        return
-
-    specimen_uuid = str(uuid.uuid4())
-    create_dataset(specimen_uuid, specimen_value, [entry_id])
-    output_dir = '{}/{}'.format(output_dir, specimen_uuid)
-    create_directory(output_dir)
-
+def write_specimen_file(specimen_field, specimen_value, project_short_name, output_dir, entry_id, full_file=None):
     dataset_name = '{}_{}'.format(specimen_field, specimen_value).replace(' ', '_')
+
     r = send_get('dataset')
     datasets = json.loads(r.text)['_items']
     for dataset in datasets:
@@ -130,28 +113,6 @@ def write_specimen_file(specimen_field, specimen_value, project_short_name, outp
             bioblocks_log('Dataset with name \'{}\' already exists, skipping!'.format(dataset_name))
             return
 
-    with open('{}/{}_fqids.tsv'.format(output_dir, dataset_name), 'w') as file:
-        while True:
-            write_bundle_results(results, file)
-            if 'Link' in r.headers:
-                nextHeader = r.headers['Link'][1:r.headers['Link'].index(
-                    '&output')]
-                r = session.post(
-                    url=nextHeader,
-                    data=json.dumps(generate_es_query(
-                        project_short_name, specimen_field, specimen_value)),
-                    headers={'Content-type': 'application/json'},
-                    timeout=None
-                )
-                results = json.loads(r.text)['results']
-                bioblocks_log('found {} results'.format(len(results)))
-            else:
-                break
-    bioblocks_log('finished writing results file {}'.format(project_short_name))
-
-
-def write_full_specimen_file(specimen_field, specimen_value, project_short_name, output_dir, full_file, entry_id):
-    bioblocks_log('Writing specimen file \'{}\''.format(specimen_value))
     r = session.post(
         url=HCA_DSS_URL,
         data=json.dumps(generate_es_query(
@@ -162,14 +123,17 @@ def write_full_specimen_file(specimen_field, specimen_value, project_short_name,
     time.sleep(5)
     results = json.loads(r.text)['results']
     if len(results) == 0:
+        bioblocks_log('Unable to find HCA data for dataset \'{}\', skipping!'.format(dataset_name))
         return
 
+    bioblocks_log('Creating specimen dataset \'{}\'.'.format(dataset_name))
+
     specimen_uuid = str(uuid.uuid4())
-    create_dataset(specimen_uuid, specimen_value, [entry_id])
+    create_dataset(specimen_uuid, dataset_name, [entry_id])
     output_dir = '{}/{}'.format(output_dir, specimen_uuid)
     create_directory(output_dir)
 
-    with open('{}/{}_fqids.tsv'.format(output_dir, specimen_value), 'w') as file:
+    with open('{}/{}_fqids.tsv'.format(output_dir, dataset_name), 'w') as file:
         while True:
             write_bundle_results(results, file, full_file)
             if 'Link' in r.headers:
@@ -199,18 +163,18 @@ def process_project(project, specimens, entry_id, args, output_dir):
         with open('{}/{}/full_fqids.tsv'.format(output_dir, entry_id), 'w') as full_file:
             for specimen in specimens:
                 for specimen_field in specimen:
-                    if specimen_field == 'id':
-                        for specimen_id in specimen[specimen_field]:
-                            write_full_specimen_file(
-                                specimen_field, specimen_id, short_name, output_dir, full_file, entry_id)
-                    else:
-                        for specimen_value in specimen[specimen_field]:
-                            if specimen_value is None:
-                                bioblocks_log('Specimen field \'{}\' with value of none.'.format(specimen_field))
-                            else:
-                                write_specimen_file(
-                                    specimen_field, specimen_value, short_name, output_dir, entry_id)
-
+                    for specimen_value in specimen[specimen_field]:
+                        if specimen_value is None:
+                            bioblocks_log('Specimen field \'{}\' with value of none.'.format(specimen_field))
+                        elif specimen_field == 'id':
+                            write_specimen_file(
+                                specimen_field, specimen_value, short_name, output_dir, entry_id, full_file)
+                        elif not args.is_dry_run:
+                            write_specimen_file(
+                                specimen_field, specimen_value, short_name, output_dir, entry_id)
+                        else:
+                            bioblocks_log('Skipping field \'{}\' with value \'{}\'.'.format(
+                                specimen_field, specimen_value))
     else:
         bioblocks_log('Skipping getting bundles for project with shortname \'{}\'.'.format(short_name))
 

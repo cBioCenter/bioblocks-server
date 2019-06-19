@@ -38,7 +38,7 @@ def run_spring_preprocessing(
     n_neighbors=5,
     n_prin_comps=30,
     n_force_iter=500,
-    MAX_CELLS_COUNT=50000,
+    MAX_CELLS_COUNT=500000,
 ):
 
     #========================================================================================#

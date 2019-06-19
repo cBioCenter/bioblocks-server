@@ -80,7 +80,7 @@
     {
       "_id": "bbdecade-0000-0000-0001-a1234567890b",
       "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
-      "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
+      "dataset": "bbdeeded-0000-0000-0002-a1234567890b",
       "icon": "assets/icons/example_tabularmuris_spring-tsne-anatomogram.png",
       "name": "Tabula Muris - SPRING vs tSNE with Anatomogram",
       "summary": "Example comparison of data reduction techniques SPRING and tSNE (of top 30 PCA components), on RNAseq profiles from 10000 cells from the CZI Tabula muris dataset. Also includes anatomogram visualization for selection of tissue types.",
@@ -93,7 +93,7 @@
     {
       "_id": "bbdecade-0000-0000-0002-a1234567890b",
       "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
-      "dataset": "bbdeeded-0000-0000-0002-a1234567890b",
+      "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
       "icon": "assets/icons/example_HPC_spring-tsne-anatomogram.png",
       "name": "HPC - SPRING vs tSNE with Anatomogram",
       "summary": "Example interaction between SPRING, tSNE and Anatomogram visualization on a small dataset.",
