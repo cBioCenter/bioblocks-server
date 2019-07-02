@@ -113,10 +113,10 @@ def write_specimen_file(specimen_field, specimen_value, project_short_name, outp
             bioblocks_log('Dataset with name \'{}\' already exists, skipping!'.format(dataset_name))
             return
 
+    es_query = generate_es_query(project_short_name, specimen_field, specimen_value)
     r = session.post(
         url=HCA_DSS_URL,
-        data=json.dumps(generate_es_query(
-            project_short_name, specimen_field, specimen_value)),
+        data=json.dumps(es_query),
         headers={'Content-type': 'application/json'},
         timeout=None,
     )
@@ -141,8 +141,7 @@ def write_specimen_file(specimen_field, specimen_value, project_short_name, outp
                     '&output')]
                 r = session.post(
                     url=nextHeader,
-                    data=json.dumps(generate_es_query(
-                        project_short_name, specimen_field, specimen_value)),
+                    data=json.dumps(es_query),
                     headers={'Content-type': 'application/json'},
                     timeout=None
                 )
