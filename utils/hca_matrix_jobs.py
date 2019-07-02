@@ -9,15 +9,14 @@ from urllib3.util.retry import Retry
 
 RFC_1123_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
 MAX_DAYS_JOB_KEEP_ALIVE = 1
+TSV_PUBLIC_URL = 'https://bioblocks.org'
+MATRIX_SERVICE_URL = 'https://matrix.data.humancellatlas.org/v0/matrix'
 
 session = requests.Session()
 retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 session.mount('http://', adapter)
 session.mount('https://', adapter)
-
-tsv_public_url = 'https://bioblocks.org'
-matrix_service_url = 'https://matrix.data.humancellatlas.org/v0/matrix'
 
 
 def days_between_dates(date1, date2):
@@ -32,7 +31,7 @@ def create_bioblocks_job(request_id, dataset):
             'dataset': dataset['_id'],
             'etag': dataset['_etag']
         },
-        'link': '{}/{}'.format(matrix_service_url, request_id),
+        'link': '{}/{}'.format(MATRIX_SERVICE_URL, request_id),
         'status': 'IN_PROGRESS'
     }))
 
@@ -88,11 +87,11 @@ def handle_hca_matrix_job_status(job):
 
 
 def send_hca_matrix_job_request(dataset):
-    bundle_fqids_url = '{}/datasets/{}/{}_fqids.tsv'.format(tsv_public_url,
+    bundle_fqids_url = '{}/datasets/{}/{}_fqids.tsv'.format(TSV_PUBLIC_URL,
                                                             dataset['_id'], dataset['name'])
     bioblocks_log('POST-ing matrix job with bundle_fqid_url=\'{}\''.format(bundle_fqids_url))
     r = session.post(
-        url=matrix_service_url,
+        url=MATRIX_SERVICE_URL,
         data=json.dumps({
             'bundle_fqids_url': bundle_fqids_url,
             'format': 'mtx',
