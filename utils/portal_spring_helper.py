@@ -156,6 +156,10 @@ def get_vscores(E, min_mean=0, nBins=50, fit_percentile=0.1, error_wt=1):
     return v_scores, CV_eff, CV_input, gene_ix, mu_gene, FF_gene, a, b
 
 
+def print_object(label, obj):
+    print('{}={}, type={}'.format(label, obj, type(obj)))
+
+    
 def filter_genes(E, base_ix=[], min_vscore_pctl=85, min_counts=3, min_cells=3, show_vscore_plot=False, sample_name=''):
     ''' 
     Filter genes by expression level and variability

@@ -87,13 +87,13 @@ def load_text(file_data, delim='\t'):
             try:
                 rowdat = np.array(map(float, dat[start_column:]))
                 if len(rowdat) != ncol:
-                    return 'ERROR: Expression matrix rows have different numbers of numeric columns. Problem encountered in row %i. Previous rows have %i numeric columns. Row %i has %i numeric columns.' % (row_ix+1, ncol, row_ix, len(rowdat))
+                    return 'ERROR: Expression matrix rows have different numbers of numeric columns. Problem encountered in row %i. Previous rows have %i numeric columns. Row %i has %i numeric columns.' % (row_ix + 1, ncol, row_ix, len(rowdat))
                 col_ix = np.nonzero(rowdat)[0]
                 X_col.extend(col_ix)
                 X_row.extend([row_ix - start_row] * len(col_ix))
                 X_data.extend(rowdat[col_ix])
             except:
-                return 'ERROR: Expression matrix rows have different numbers of numeric columns. Problem encountered in row %i' % (row_ix+1)
+                return 'ERROR: Expression matrix rows have different numbers of numeric columns. Problem encountered in row %i' % (row_ix + 1)
 
     if start_row == -1:
         return 'ERROR: No numeric values found in expression matrix'

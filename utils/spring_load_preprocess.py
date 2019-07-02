@@ -63,7 +63,9 @@ def run_spring_preprocessing(
     # Load expression matrix - supporting mtx files, but I also have code for
     # many other formats. Let me know if you want something more flexible.
     E = up.load_mtx(mtx_file)
-    gene_list = load_genes(gene_file, delimiter=None)
+    gene_list = load_genes(gene_file,
+                           delimiter='\t' if gene_file.endswith('tsv') else None,
+                           skip_rows=1 if gene_file.endswith('tsv') else 0)
 
     num_rows = E.shape[0]
 
@@ -133,6 +135,7 @@ def run_spring_preprocessing(
 
     # Normalize counts matrix
     E = tot_counts_norm(E[cell_filter, :])[0]
+    # E = tot_counts_norm(E[0])[0]
 
     # Save counts matrix as hdf5 files for fast loading in SPRING
     save_hdf5_genes(
