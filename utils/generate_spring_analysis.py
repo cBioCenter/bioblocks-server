@@ -52,7 +52,8 @@ def analyze_dataset(dataset, dataset_dir):
     dataset_id = dataset['_id']
     matrix_location = dataset['matrixLocation']
     # dataset_id = 'f83165c5-e2ea-4d15-a5cf-33f3550bffde'
-    # matrix_location = 'https://s3.amazonaws.com/dcp-matrix-service-results-prod/c34ccb0e-e4fa-4c08-8d76-84aca71dfc99.mtx.zip'
+    # matrix_location =
+    # 'https://s3.amazonaws.com/dcp-matrix-service-results-prod/c34ccb0e-e4fa-4c08-8d76-84aca71dfc99.mtx.zip'
 
     print('analyzing dataset directory \'{}\' with matrix_location \'{}\''.format(dataset_dir, matrix_location))
     if (matrix_location.endswith('.zip') is False and matrix_location.endswith('mtx') is False):
