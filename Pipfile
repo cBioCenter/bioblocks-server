@@ -32,11 +32,12 @@ LC_ALL = "en_US.UTF-8"
 LANG = "en_US.UTF-8"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
 
 [scripts]
 ci_test = "pytest --junitxml=dist/test-reports/junit.xml --disable-warnings --cov=src --cov-report xml:dist/cov.xml"
 cron_job = "python utils/bioblocks_server_cron_job.py"
+dry_cron_job = "python utils/bioblocks_server_cron_job.py --dry-run=True"
 lint = "flake8 ."
 start = "python src/wsgi.py"
 test = "python -m pytest --disable-warnings --cov=src --cov-report xml:dist/cov.xml"
