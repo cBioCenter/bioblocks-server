@@ -25,6 +25,8 @@ pipenv run start
 
    ```sh
    pipenv install
+   pipenv shell
+   pip install multicoretsne #Fails if in the Pipfile, so need to run in shell.
    ```
 
 3. Install mongo
