@@ -17,6 +17,7 @@ uwsgi = "*"
 matplotlib = "*"
 fa2 = "*"
 networkx = "*"
+pycryptodome = "*"
 python-louvain = "*"
 urllib3 = "*"
 

@@ -1,4 +1,4 @@
-from src.bb_schema import analysis, dataset, job, vignette, visualization
+from src.bb_schema import analysis, dataset, instantiation, job, vignette, visualization
 
 settings = {
     'SERVER_NAME': None,
@@ -35,15 +35,38 @@ settings = {
     # return media as URL instead
     'RETURN_MEDIA_AS_URL': True,
     'MEDIA_ENDPOINT': 'media',
-
+    'RENDERERS': ['eve.render.JSONRenderer'],
     'DOMAIN': {
         'analysis': {
             'id_field': '_id',
             'schema': analysis.schema,
         },
+        'apps': {
+            'datasource': {
+                'source': 'instantiation',
+            },
+            'item_url': 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}(.js)?")'
+
+        },
+        'communicator': {
+            'datasource': {
+                'source': 'instantiation',
+            },
+            'item_url': 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}(.js)?")'
+        },
         'dataset': {
             'id_field': '_id',
             'schema': dataset.schema,
+        },
+        'instantiation': {
+            'id_field': '_id',
+            'extra_response_fields': ['parent_private_key',
+                                      'frame_public_key',
+                                      'shared_communication_secret',
+                                      'instantiation_id'],
+            'item_methods': ['GET'],
+            'resource_methods': ['POST'],
+            'schema': instantiation.schema,
         },
         'job': {
             'id_field': '_id',

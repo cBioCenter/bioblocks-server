@@ -1,14 +1,17 @@
 import os
 import sys
-
 from eve import Eve
 from flask import request, Response, send_from_directory
 from flask_cors import CORS
 from os.path import dirname
 from src import settings
+from src.bb_schema import apps, communicator, instantiation
 from src.data import UUIDEncoder, UUIDValidator
 
 static_folder = '{}/../files'.format(
+    os.path.dirname(os.path.abspath(__file__)))
+
+template_folder = '{}/../templates'.format(
     os.path.dirname(os.path.abspath(__file__)))
 
 sys.path.append(dirname(__file__) + '/../files/spring/cgi-bin')
@@ -53,8 +56,23 @@ def handle_spring_cgi(filename):
 
 def create_app(settings=settings.get_bioblocks_settings()):
     EveApp = Eve(json_encoder=UUIDEncoder.UUIDEncoder, settings=settings,
-                 static_folder=static_folder, validator=UUIDValidator.UUIDValidator)
+                 static_folder=static_folder, template_folder=template_folder,
+                 validator=UUIDValidator.UUIDValidator)
     CORS(EveApp)
+
+    """
+    @EveApp.route('/apps/<path:app_id>')
+    def serveAppJs(app_id):
+        if app_id.endswith('.js'):
+            return redirect('/apps/{}'.format(app_id[:-3]))
+        return redirect('/apps/{}'.format(app_id))
+
+    @EveApp.route('/communicator/<path:frame_communicator_id>')
+    def serveCommJs(frame_communicator_id):
+        if frame_communicator_id.endswith('.js'):
+            return redirect('/communicator/{}'.format(frame_communicator_id[:-3]))
+        return redirect('/communicator/{}'.format(frame_communicator_id))
+    """
 
     @EveApp.route('/spring/springViewer.html')
     def spring_index():
@@ -80,6 +98,19 @@ def create_app(settings=settings.get_bioblocks_settings()):
 
 
 app = create_app()
+
+app.on_insert_instantiation += instantiation.handle_on_insert_instantiation
+app.on_post_GET_instantiation += instantiation.handle_on_post_GET_instantiation
+app.on_post_POST_instantiation += instantiation.handle_on_post_POST_instantiation
+app.on_pre_GET_instantiation += instantiation.handle_on_pre_GET_instantiation
+app.on_fetched_item_instantiation += instantiation.handle_on_fetched_item_instantiation
+app.on_fetched_resource_instantiation += instantiation.handle_on_fetched_resource_instantiation
+
+app.on_pre_GET_apps = apps.handle_on_pre_GET_apps
+app.on_post_GET_apps += apps.handle_on_post_GET_apps
+
+app.on_pre_GET_communicator = communicator.handle_on_pre_GET_communicator
+app.on_post_GET_communicator += communicator.handle_on_post_GET_communicator
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=11037)
