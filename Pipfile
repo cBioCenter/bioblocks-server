@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
+python-dotenv = "*"
 cmake = "*"
 eve = "*"
 flask = "*"
@@ -41,4 +42,5 @@ cron_job = "python utils/bioblocks_server_cron_job.py"
 dry_cron_job = "python utils/bioblocks_server_cron_job.py --dry-run=True"
 lint = "flake8 ."
 start = "python src/wsgi.py"
+start_apps = "python src/wsgi_apps.py"
 test = "python -m pytest --disable-warnings --cov=src --cov-report xml:dist/cov.xml"

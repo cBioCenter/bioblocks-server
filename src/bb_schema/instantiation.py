@@ -46,7 +46,7 @@ schema = {
     }
 }
 
-
+''' NPG: UNSURE WHAT THIS WAS USED FOR
 def handle_on_fetched_resource_instantiation(response):
     """Called when resource is fetched from /instantiation"""
     print('handle_on_fetched_resource_instantiation, response: {}'.format(response))
@@ -55,7 +55,7 @@ def handle_on_fetched_resource_instantiation(response):
 def handle_on_fetched_item_instantiation(response):
     """Called when item is fetched from /instantiation/<item>"""
     print('handle_on_fetched_item_instantiation, response: {}'.format(response))
-
+'''
 
 def handle_on_pre_GET_instantiation(resource, lookup):
     """Called when GET is received.
@@ -73,13 +73,15 @@ def handle_on_post_GET_instantiation(resource, payload):
 
     data = json.loads(payload.response[0])
     if ('instantiation_id' in data):
-
-        # current_app.data.driver.db['instantiation'].update({'_id': data['_id']},
-        #                                                    {'$unset': {'instantiation_id': None}}, False)
+        # this get should only happen once, so remove the instantiation_id from the database.
+        current_app.data.driver.db['instantiation'].update({'_id': data['_id']},
+                                                           {'$unset': {'instantiation_id': None}}, False)
+        
         # Setting payload.data changes what the user receives.
         payload.content_type = 'text/html'
-        payload.data = render_template('template.html',
-                                       frame_communicator_id=data['frame_communicator_id'], app_id=data['app_id'])
+        payload.data = render_template('instantiation.html',
+                                       frame_communicator_id=data['frame_communicator_id'],
+                                       app_id=data['app_id'])
 
     print('handle_on_post_GET_instantiation, payload: {}'.format(payload))
 
@@ -113,13 +115,14 @@ def handle_on_insert_instantiation(event):
 
     db_id = uuid.uuid4()
     instantiation_id = uuid.uuid4()
+    hidden_instantiation_id = uuid.uuid4()
     shared_communication_secret = uuid.uuid4()
     frame_communicator_id = uuid.uuid4()
 
     event[0].update({
         '_id': str(db_id),
         'instantiation_id': str(instantiation_id),
-        'hidden_instantiation_id': str(instantiation_id),
+        'hidden_instantiation_id': str(hidden_instantiation_id),
         'shared_communication_secret': str(shared_communication_secret),
         'frame_communicator_id': str(frame_communicator_id),
         'parent_private_key': parent_private_key.hex(),

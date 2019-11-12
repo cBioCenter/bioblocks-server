@@ -1,4 +1,4 @@
-from src.bb_schema import analysis, dataset, instantiation, job, vignette, visualization
+from src.bb_schema import instantiation, visualization
 
 settings = {
     'SERVER_NAME': None,
@@ -17,14 +17,11 @@ settings = {
 
     'MONGO_DBNAME': 'apitest',
 
-    # Enable reads (GET), inserts (POST) and DELETE for resources/collections
-    # (if you omit this line, the API will default to ['GET'] and provide
-    # read-only access to the endpoint).
-    'RESOURCE_METHODS': ['GET', 'POST', 'DELETE'],
+    # Disable all resources/collections endpoints.
+    'RESOURCE_METHODS': [],
 
-    # Enable reads (GET), edits (PATCH), replacements (PUT) and deletes of
-    # individual items  (defaults to read-only item access).
-    'ITEM_METHODS': ['GET', 'PATCH', 'PUT', 'DELETE'],
+    # Enable reads (GET) only for all individual items
+    'ITEM_METHODS': ['GET'],
 
     'ITEM_URL': 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}")',
 
@@ -37,43 +34,35 @@ settings = {
     'MEDIA_ENDPOINT': 'media',
     'RENDERERS': ['eve.render.JSONRenderer'],
     'DOMAIN': {
-        'analysis': {
-            'id_field': '_id',
-            'schema': analysis.schema,
+        'apps': {
+            'datasource': {
+                'source': 'instantiation',
+            },
+            'item_methods': ['GET'],
+            'resource_methods': [],
+            'item_url': 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}(.js)?")'
         },
-        'dataset': {
-            'id_field': '_id',
-            'schema': dataset.schema,
+        'communicator': {
+            'datasource': {
+                'source': 'instantiation',
+            },
+            'item_methods': ['GET'],
+            'resource_methods': [],
+            'item_url': 'regex("[a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12}(.js)?")',
+            'schema': instantiation.schema,
         },
         'instantiation': {
             'id_field': '_id',
             'extra_response_fields': ['parent_private_key',
                                       'frame_public_key',
-                                      'hidden_instantiation_id',
                                       'shared_communication_secret',
                                       'instantiation_id'],
-            'item_methods': [],
-            'resource_methods': ['POST'],
+            'item_methods': ['GET'],
+            'resource_methods': [],
             'schema': instantiation.schema,
-        },
-        'job': {
-            'id_field': '_id',
-            'schema': job.schema,
-        },
-        'spring': {
-            'RESOURCE_METHODS': ['GET', 'POST']
-        },
-        'vignette': {
-            'id_field': '_id',
-            'schema': vignette.schema,
-        },
-        'visualization': {
-            'id_field': '_id',
-            'schema': visualization.schema,
         },
     }
 }
 
-
-def get_bioblocks_settings():
+def get_bioblocks_apps_settings():
     return settings

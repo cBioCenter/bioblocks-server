@@ -22,5 +22,6 @@
   "python.linting.flake8CategorySeverity.Q": "Error",
   "python.linting.flake8CategorySeverity.W": "Error",
   "python.linting.flake8Enabled": true,
-  "python.linting.pylintEnabled": false
+  "python.linting.pylintEnabled": false,
+  "python.pythonPath": "/usr/local/bin/python3"
 }

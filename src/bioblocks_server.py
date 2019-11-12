@@ -5,30 +5,31 @@ from flask import request, Response, send_from_directory
 from flask_cors import CORS
 from os.path import dirname
 from src import settings
-from src.bb_schema import apps, communicator, instantiation
+from src.bb_schema import instantiation
 from src.data import UUIDEncoder, UUIDValidator
 
-static_folder = '{}/../files'.format(
-    os.path.dirname(os.path.abspath(__file__)))
-
-template_folder = '{}/../templates'.format(
-    os.path.dirname(os.path.abspath(__file__)))
+static_folder = '{0}/../files'.format(
+    os.path.dirname(os.path.abspath(__file__))
+)
+template_folder = '{0}/../templates'.format(
+    os.path.dirname(os.path.abspath(__file__))
+)
 
 sys.path.append(dirname(__file__) + '/../files/spring/cgi-bin')
 
 
 def handle_spring_cgi(filename):
-    cgi_location = '{}/spring/cgi-bin/{}'.format(static_folder, filename)
+    cgi_location = '{0}/spring/cgi-bin/{1}'.format(static_folder, filename)
     with open(cgi_location) as f:
         import cgi
         code = compile(f.read(), filename, 'exec')
         cgi_params = request.form.to_dict()
 
         if 'base_dir' in cgi_params:
-            cgi_params['base_dir'] = '{}/{}'.format(static_folder, cgi_params['base_dir'])
+            cgi_params['base_dir'] = '{0}/{1}'.format(static_folder, cgi_params['base_dir'])
 
         if 'sub_dir' in cgi_params:
-            cgi_params['sub_dir'] = '{}/{}'.format(static_folder, cgi_params['sub_dir'])
+            cgi_params['sub_dir'] = '{0}/{1}'.format(static_folder, cgi_params['sub_dir'])
 
         def get_cgi_param(self, key):
             return cgi_params[key]
@@ -60,19 +61,9 @@ def create_app(settings=settings.get_bioblocks_settings()):
                  validator=UUIDValidator.UUIDValidator)
     CORS(EveApp)
 
-    """
-    @EveApp.route('/apps/<path:app_id>')
-    def serveAppJs(app_id):
-        if app_id.endswith('.js'):
-            return redirect('/apps/{}'.format(app_id[:-3]))
-        return redirect('/apps/{}'.format(app_id))
-
-    @EveApp.route('/communicator/<path:frame_communicator_id>')
-    def serveCommJs(frame_communicator_id):
-        if frame_communicator_id.endswith('.js'):
-            return redirect('/communicator/{}'.format(frame_communicator_id[:-3]))
-        return redirect('/communicator/{}'.format(frame_communicator_id))
-    """
+    @EveApp.route('/js/<filename>')
+    def static_javascript(filename):
+        return send_from_directory(static_folder, 'staticjs/{0}'.format(filename))
 
     @EveApp.route('/spring/springViewer.html')
     def spring_index():
@@ -99,18 +90,26 @@ def create_app(settings=settings.get_bioblocks_settings()):
 
 app = create_app()
 
+# Set Environment Configuration
+# Default is 'development'. Other valid values: 'testing' and 'production'
+# To change, change FLASK_ENV the .env file at the root of the project
+if app.config['ENV'] == 'production':
+    app.config.from_object('config.ProductionConfig')
+elif app.config['ENV'] == 'development':
+    app.config.from_object('config.DevelopmentConfig')
+elif app.config['ENV'] == 'testing':
+    app.config.from_object('config.TestingConfig')
+else:
+    raise Exception(
+        'Invalid FLASK_ENV specified "{0}".'.format(app.config['ENV'])
+    )
+
+#print('{0}/config.py'.format( os.path.dirname(os.path.abspath(__file__))))
+#app.config.from_object('config.ProductionConfig')
+#print('FLASK_ENV is set to {0}'.format(app.config['ENV']))
+
 app.on_insert_instantiation += instantiation.handle_on_insert_instantiation
-app.on_post_GET_instantiation += instantiation.handle_on_post_GET_instantiation
 app.on_post_POST_instantiation += instantiation.handle_on_post_POST_instantiation
-app.on_pre_GET_instantiation += instantiation.handle_on_pre_GET_instantiation
-app.on_fetched_item_instantiation += instantiation.handle_on_fetched_item_instantiation
-app.on_fetched_resource_instantiation += instantiation.handle_on_fetched_resource_instantiation
-
-app.on_pre_GET_apps = apps.handle_on_pre_GET_apps
-app.on_post_GET_apps += apps.handle_on_post_GET_apps
-
-app.on_pre_GET_communicator = communicator.handle_on_pre_GET_communicator
-app.on_post_GET_communicator += communicator.handle_on_post_GET_communicator
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=11037)
+    app.run(host='0.0.0.0', port=11037, threaded=True)

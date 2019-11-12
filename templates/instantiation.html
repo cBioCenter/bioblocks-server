@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- only allow loading from {{config['BB_APPS_ORIGIN']}}
+         TODO: CSPs preferred delivery mechanism is an HTTP header-->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> 
+
+    <script type="text/javascript" src="{{config['BB_APPS_ORIGIN']}}/js/jsencrypt.js"></script>
+    <script type="text/javascript" src="{{config['BB_APPS_ORIGIN']}}/js/aesjs_3.1.2.js"></script>
+    <script type="module"          src="{{config['BB_APPS_ORIGIN']}}/communicator/{{frame_communicator_id}}.js"></script>
+    <script type="text/javascript" src="{{config['BB_APPS_ORIGIN']}}/apps/{{ app_id }}.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{config['BB_ORIGIN']}}/mystyle.css">  <!-- TEST 1: SHOULD FAIL (AND DOES) + ISSUE SECURITY VIOLATION -->
+
+    <script>
+      console.log('HELLO FROM INLINE SCRIPT'); // TEST 2: SHOULD FAIL (AND DOES) + ISSUE SECURITY VIOLATION 
+    </script>
+
+  </head>
+  <body id="frame_body">
+    
+    this is instantiation.html
+  
+    <iframe src="test.com"></iframe>           <!-- TEST 3: SHOULD FAIL (AND DOES) + ISSUE SECURITY VIOLATION  -->
+
+  </body>
+</html>
