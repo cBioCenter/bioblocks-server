@@ -50,3 +50,10 @@ pipenv run start
    ```sh
    circleci local execute --job build
    ```
+
+6. Running nginx locally
+
+   ```sh
+   cd src
+   uwsgi --ini bioblocks-server.ini  --python-path /usr/local/bin/python3.7 --python-path ../ -w wsgi:app
+   ```

@@ -1,211 +1,202 @@
-class _BioBlocksFrameAPI {
+class BioBlocksFrameAPI {
   constructor() {
-    console.log('({{hidden_instantiation_id}}) constructing _BioBlocksFrameAPI');
-    this._app_id = '{{app_id}}';
-    this._hidden_instantiation_id = '{{hidden_instantiation_id}}';
-    this._shared_communication_secret = '{{shared_communication_secret}}';
+    console.log('({{hiddenInstantiationId}}) constructing BioBlocksFrameAPI');
+    this.appId = '{{appId}}';
+    this.hiddenInstantiationId = '{{hiddenInstantiationId}}';
+    this.sharedCommunicationSecret = '{{sharedCommunicationSecret}}';
 
     //setup RSA encryption
-    this._rsa_encryptor = new JSEncrypt();
-    this._rsa_decryptor = new JSEncrypt();
-    this._rsa_encryptor.setPublicKey(
-      this._hex2ascii('{{parent_public_key}}')
-    );
-    this._rsa_decryptor.setPrivateKey(
-      this._hex2ascii('{{frame_private_key}}')
-    );
+    this.rsaEncryptor = new JSEncrypt();
+    this.rsaDecryptor = new JSEncrypt();
+    this.rsaEncryptor.setPublicKey(this.hex2ascii('{{parentPublicKey}}'));
+    this.rsaDecryptor.setPrivateKey(this.hex2ascii('{{framePrivateKey}}'));
 
-    //setup postmessage listeners
-    this._setupPMListener();
-    
+    //setup postMessage listeners
+    this.setupPMListener();
+
     //
     // attempt handshake with parent
-    // - verify parent is available 
+    // - verify parent is available
     // - verify parent can encrypt / decrypt messages with server-provided keys
     //
-    this._callFn('initialize', {'my test key': 'has a value!!'}).then(
-      function(response) {	//initialization succeeded
-        console.log('({{hidden_instantiation_id}}) initialization succeeded', response);
+    this.callFn('initialize', { 'my test key': 'has a value!!' }).then(
+      response => {
+        //initialization succeeded
+        console.log('({{hiddenInstantiationId}}) initialization succeeded', response);
       },
-      function(err){ //initialization failed
-        console.error('({{hidden_instantiation_id}}) communication with bioblocks failed', err);
-    		delete this._rsa_encryptor;
-    		delete this._rsa_decryptor;
-      }
+      err => {
+        //initialization failed
+        console.error('({{hiddenInstantiationId}}) communication with bioblocks failed', err);
+        delete this.rsaEncryptor;
+        delete this.rsaDecryptor;
+      },
     );
   }
-  
 
   //
   //
   // MAIN FUNCTIONS EXPOSED TO APP
   //
   //
-  addDataUpdatedListener(fn){
-  	if (!this._data_updated_listeners){ this._data_updated_listeners = []; }
-  	this._data_updated_listeners.append(fn);
+  addDataUpdatedListener(fn) {
+    if (!this.dataUpdatedListeners) {
+      this.dataUpdatedListeners = [];
+    }
+    this.dataUpdatedListeners.append(fn);
   }
-
-
 
   //
   //
   // PRIVATE
   //
   //
-  
+
   /**
-   * _setupPMListener: This function will coordinate all incoming message events. It 
+   * setupPMListener: This function will coordinate all incoming message events. It
    *                   will respond to [1] postMessages that are in response to api calls
-   *                   (i.e., the message_id is in this singleton's message_id->promise 
+   *                   (i.e., the messageId is in this singleton's messageId->promise
    *                   hashmap), and [2] postMessages that target this instantiation.
    *                   In addition, this function will validate all messages and dispatch
    *                   them appropriately.
    */
-  _setupPMListener(){
-    //setup system for monitoring postmessages and resolving/rejecting promises
-    this._message_promises = {};
-
-    //setup variable access within async message function
-    const instantiation_id = this._instantiation_id;
-    const hidden_instantiation_id = this._hidden_instantiation_id;
-    const shared_communication_secret = this._shared_communication_secret;
-    const rsa_decryptor = this._rsa_decryptor;
-    const message_promises = this._message_promises;
+  setupPMListener() {
+    //setup system for monitoring postMessages and resolving/rejecting promises
+    this.messagePromises = {};
 
     //setup single async message listener
-    window.addEventListener('message', function(e) {
-      console.log('({{hidden_instantiation_id}}) message received in iframe:', e);
+    window.addEventListener('message', e => {
+      console.log('({{hiddenInstantiationId}}) message received in iframe:', e);
 
       //is this message aimed at this instantiation
-      if (e.origin === '{{config["BB_ORIGIN"]}}' && e.data &&
-          e.data.target_instantiation_id === hidden_instantiation_id){
-        
+      if (
+        e.origin === '{{config["BB_ORIGIN"]}}' &&
+        e.data &&
+        e.data.targetInstantiationId === this.hiddenInstantiationId
+      ) {
         //decrypt step 1: decrypt aes key
-        const aes_decryption_key = aesjs.utils.hex.toBytes( 
-          rsa_decryptor.decrypt( e.data.key )
-        );
+        const aesDecryptionKey = aesjs.utils.hex.toBytes(this.rsaDecryptor.decrypt(e.data.key));
 
         //decrypt step 2: decrypt the aes encrypted payload
-        let aesCtr = new aesjs.ModeOfOperation.ctr(aes_decryption_key);
-        const payload = JSON.parse(
-          aesjs.utils.utf8.fromBytes(
-            aesCtr.decrypt( 
-              aesjs.utils.hex.toBytes(e.data.payload) 
-            )
-          )
-        );
+        let aesCtr = new aesjs.ModeOfOperation.ctr(aesDecryptionKey);
+        const payload = JSON.parse(aesjs.utils.utf8.fromBytes(aesCtr.decrypt(aesjs.utils.hex.toBytes(e.data.payload))));
 
-        console.log('({{hidden_instantiation_id}}) instantiation received payload:', payload);
-    	  if (payload.shared_communication_secret !== shared_communication_secret){
-          console.error('({{hidden_instantiation_id}}) Invalid communication attempt from parent. Communication secrets do not match:');
-          console.error(' - parent shared_communication_secret='+payload.shared_communication_secret);
-          console.error(' - iFrame shared_communication_secret='+shared_communication_secret);
-    	    return;
-    	  }
-        
-        if(e.data.message_id && message_promises[e.data.message_id]){
+        console.log('({{hiddenInstantiationId}}) instantiation received payload:', payload);
+        if (payload.sharedCommunicationSecret !== this.sharedCommunicationSecret) {
+          console.error(
+            '({{hiddenInstantiationId}}) Invalid communication attempt from parent. Communication secrets do not match:',
+          );
+          console.error(` - parent sharedCommunicationSecret = ${payload.sharedCommunicationSecret}`);
+          console.error(` - iFrame sharedCommunicationSecret = ${this.sharedCommunicationSecret}`);
+          return;
+        }
+
+        if (e.data.messageId && this.messagePromises[e.data.messageId]) {
           //parent is responding to one of our previous requests
-    	    const promise = message_promises[e.data.message_id];
-          delete message_promises[e.data.message_id];
-          
-    	    if(payload.response_error){
-    	      promise.reject(
-    		      'postMessage error: parent returned error:', payload.response_error.error_desc
-    	      );
-    	      return;
-    	    }
-    	    else{
-            console.log('({{hidden_instantiation_id}}) promise:', promise);
-    	      promise.resolve(payload.success_data);
-    	      return;
+          const promise = this.messagePromises[e.data.messageId];
+          delete this.messagePromises[e.data.messageId];
+
+          if (payload.responseError) {
+            promise.reject('postMessage error: parent returned error:', payload.responseError.errorDesc);
+            return;
+          } else {
+            console.log('({{hiddenInstantiationId}}) promise:', promise);
+            promise.resolve(payload.successData);
+            return;
           }
-        }
-        else{ 
+        } else {
           //parent is initiating a new request
-          console.log('({{hidden_instantiation_id}}) parent appears to be initiating a new request');
-    			let request = payload;
-    			//switch(request.fn){
-    				//case('data_updated'): asdf
-    			//}
+          console.log('({{hiddenInstantiationId}}) parent appears to be initiating a new request');
+          let request = payload;
+          //switch(request.fn){
+          //case('dataUpdated'): asdf
+          //}
         }
-      }	
-      else{
+      } else {
         console.log(
-          '({{hidden_instantiation_id}}) postMessage detected not targeted at this instantiation', instantiation_id
+          '({{hiddenInstantiationId}}) postMessage detected not targeted at this instantiation',
+          this.instantiationId,
         );
       }
     });
   }
-  
-  
+
   /**
-   * _callFn: call a function through postMessage. returns a promise that will 
+   * callFn: call a function through postMessage. returns a promise that will
    *          resolve with the parent response or raise an error.
    */
-  _callFn(fn, payload){
+  callFn(fn, payload) {
     //generate a unique message id, populate and encrypt data, execute postMessage call
-    const message_id = this._uuid();
-    const unencrypted_payload_obj = Object.assign(
-  	  { fn: fn, shared_communication_secret: this._shared_communication_secret },
-  	  payload 
+    const messageId = this.uuid();
+    const unencryptedPayloadObj = Object.assign(
+      {
+        fn: fn,
+        sharedCommunicationSecret: this.sharedCommunicationSecret,
+      },
+      payload,
     );
 
-    const rsa_encryptor = this._rsa_encryptor;
-    const hidden_instantiation_id = this._hidden_instantiation_id;
+    const rsaEncryptor = this.rsaEncryptor;
+    const hiddenInstantiationId = this.hiddenInstantiationId;
 
-    let promiseResolve, promiseReject;
-    const promise = new Promise(function(resolve, reject) {
+    let promiseResolve;
+    let promiseReject;
+    const promise = new Promise((resolve, reject) => {
       const cryptoObj = window.crypto || window.msCrypto;
       const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key
-      const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes)
+      const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
 
-      //console.log('sending message '+message_id+' to window ', window.parent);
-  		window.parent.postMessage({
-          key: rsa_encryptor.encrypt( aesjs.utils.hex.fromBytes( aesKeyBytes )),
-          instantiation_id: hidden_instantiation_id,
-  			  message_id: message_id,
-          payload: aesjs.utils.hex.fromBytes(   //convert encrypted bytes to hex for postmessage
-            aesCtr.encrypt(                     //AES encrypt the object bytes
-              aesjs.utils.utf8.toBytes(         //convert object string to bytes
-                JSON.stringify( unencrypted_payload_obj ) 
-              )
-            )
-          )
-  		  },
-  		  '{{config["BB_ORIGIN"]}}'
+      //console.log('sending message '+messageId+' to window ', window.parent);
+      window.parent.postMessage(
+        {
+          instantiationId: hiddenInstantiationId,
+          key: rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
+          messageId: messageId,
+          payload: aesjs.utils.hex.fromBytes(
+            //convert encrypted bytes to hex for postMessage
+            aesCtr.encrypt(
+              //AES encrypt the object bytes
+              aesjs.utils.utf8.toBytes(
+                //convert object string to bytes
+                JSON.stringify(unencryptedPayloadObj),
+              ),
+            ),
+          ),
+        },
+        '{{config["BB_ORIGIN"]}}',
       );
       promiseResolve = resolve;
       promiseReject = reject;
-  	});
-  	
-  	this._message_promises[message_id] = {
-      promise: promise, 
-      resolve: promiseResolve, 
-      reject: promiseReject
+    });
+
+    this.messagePromises[messageId] = {
+      promise: promise,
+      reject: promiseReject,
+      resolve: promiseResolve,
     };
-  	return promise;
+    return promise;
   }
 
   /**
-   * _hex2ascii: convert a string that contains hex into ASCII
+   * hex2ascii: convert a string that contains hex into ASCII
    */
-  _hex2ascii(hex){
-    var str = '';
-    for (var i = 0; i < hex.length; i += 2) str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  hex2ascii(hex = '') {
+    let str = '';
+    for (let i = 0; i < hex.length; i += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    }
     return str;
   }
 
   /**
-   * _uuid: generate random UUID 
+   * uuid: generate random UUID
    */
-  _uuid(){
+  uuid() {
     function _p8(s) {
-      var p = (Math.random().toString(16)+"000000000").substr(2,8);
-      return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+      const p = (Math.random().toString(16) + '000000000').substr(2, 8);
+      return s ? '-' + p.substr(0, 4) + '-' + p.substr(4, 4) : p;
     }
     return _p8() + _p8(true) + _p8(true) + _p8();
   }
 }
 
-export const bbAPI = new _BioBlocksFrameAPI();
+export const bbAPI = new BioBlocksFrameAPI();

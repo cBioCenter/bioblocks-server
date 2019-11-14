@@ -53,16 +53,17 @@ settings = {
         },
         'instantiation': {
             'id_field': '_id',
-            'extra_response_fields': ['parent_private_key',
-                                      'frame_public_key',
-                                      'shared_communication_secret',
-                                      'instantiation_id'],
+            'extra_response_fields': ['parentPrivateKey',
+                                      'framePublicKey',
+                                      'sharedCommunicationSecret',
+                                      'instantiationId'],
             'item_methods': ['GET'],
             'resource_methods': [],
             'schema': instantiation.schema,
         },
     }
 }
+
 
 def get_bioblocks_apps_settings():
     return settings

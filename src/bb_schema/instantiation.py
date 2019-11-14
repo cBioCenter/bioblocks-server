@@ -8,39 +8,39 @@ schema = {
         'required': False,
         'type': 'uuid'
     },
-    'app_id': {
+    'appId': {
         'required': True,
         'type': 'uuid'
     },
-    'frame_communicator_id': {
+    'frameCommunicatorId': {
         'required': False,
         'type': 'uuid'
     },
-    'instantiation_id': {
+    'instantiationId': {
         'required': False,
         'type': 'uuid'
     },
-    'hidden_instantiation_id': {
+    'hiddenInstantiationId': {
         'required': False,
         'type': 'uuid'
     },
-    'shared_communication_secret': {
+    'sharedCommunicationSecret': {
         'required': False,
         'type': 'uuid'
     },
-    'parent_private_key': {
+    'parentPrivateKey': {
         'required': False,
         'type': 'string',
     },
-    'parent_public_key': {
+    'parentPublicKey': {
         'required': False,
         'type': 'string',
     },
-    'frame_private_key': {
+    'framePrivateKey': {
         'required': False,
         'type': 'string',
     },
-    'frame_public_key': {
+    'framePublicKey': {
         'required': False,
         'type': 'string',
     }
@@ -57,13 +57,14 @@ def handle_on_fetched_item_instantiation(response):
     print('handle_on_fetched_item_instantiation, response: {}'.format(response))
 '''
 
+
 def handle_on_pre_GET_instantiation(resource, lookup):
     """Called when GET is received.
     Searches for an instantiation where the instantiation_id is the id in the url.
     """
 
     if '_id' in lookup:
-        lookup['instantiation_id'] = lookup['_id']
+        lookup['instantiationId'] = lookup['_id']
         del lookup['_id']
     print('handle_on_pre_GET_instantiation, lookup: {}'.format(lookup))
 
@@ -72,16 +73,16 @@ def handle_on_post_GET_instantiation(resource, payload):
     """Called when response from GET is about to be sent."""
 
     data = json.loads(payload.response[0])
-    if ('instantiation_id' in data):
+    if ('instantiationId' in data):
         # this get should only happen once, so remove the instantiation_id from the database.
         current_app.data.driver.db['instantiation'].update({'_id': data['_id']},
-                                                           {'$unset': {'instantiation_id': None}}, False)
-        
+                                                           {'$unset': {'instantiationId': None}}, False)
+
         # Setting payload.data changes what the user receives.
         payload.content_type = 'text/html'
         payload.data = render_template('instantiation.html',
-                                       frame_communicator_id=data['frame_communicator_id'],
-                                       app_id=data['app_id'])
+                                       frameCommunicatorId=data['frameCommunicatorId'],
+                                       appId=data['appId'])
 
     print('handle_on_post_GET_instantiation, payload: {}'.format(payload))
 
@@ -91,10 +92,10 @@ def handle_on_post_POST_instantiation(resource, payload):
     # from src import bioblocks_server
 
     data = json.loads(payload.response[0])
-    if ('parent_private_key' in data) and ('frame_public_key' in data):
+    if ('parentPrivateKey' in data) and ('framePublicKey' in data):
         current_app.data.driver.db['instantiation'].update(
             {'_id': data['_id']},
-            {'$unset': {'parent_private_key': None, 'frame_public_key': None}}, False)
+            {'$unset': {'parentPrivateKey': None, 'framePublicKey': None}}, False)
 
     payload.data = json.dumps(data)
     print('handle_on_post_POST_instantiation, payload: {}'.format(payload))
@@ -121,12 +122,12 @@ def handle_on_insert_instantiation(event):
 
     event[0].update({
         '_id': str(db_id),
-        'instantiation_id': str(instantiation_id),
-        'hidden_instantiation_id': str(hidden_instantiation_id),
-        'shared_communication_secret': str(shared_communication_secret),
-        'frame_communicator_id': str(frame_communicator_id),
-        'parent_private_key': parent_private_key.hex(),
-        'parent_public_key': parent_public_key.hex(),
-        'frame_private_key': frame_private_key.hex(),
-        'frame_public_key': frame_public_key.hex(),
+        'instantiationId': str(instantiation_id),
+        'hiddenInstantiationId': str(hidden_instantiation_id),
+        'sharedCommunicationSecret': str(shared_communication_secret),
+        'frameCommunicatorId': str(frame_communicator_id),
+        'parentPrivateKey': parent_private_key.hex(),
+        'parentPublicKey': parent_public_key.hex(),
+        'framePrivateKey': frame_private_key.hex(),
+        'framePublicKey': frame_public_key.hex(),
     })

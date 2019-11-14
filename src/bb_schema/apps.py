@@ -7,7 +7,7 @@ def handle_on_pre_GET_apps(resource, lookup):
     print('---!~!~')
     print(lookup)
     if '_id' in lookup:
-        lookup['app_id'] = lookup['_id'][:-3]
+        lookup['appId'] = lookup['_id'][:-3]
         del lookup['_id']
     print('handle_on_pre_GET_apps, lookup: {}'.format(lookup))
 
