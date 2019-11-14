@@ -69,7 +69,7 @@ class BioBlocksFrameAPI {
 
       //is this message aimed at this instantiation
       if (
-        e.origin === '{{config["BB_ORIGIN"]}}' &&
+        // e.origin === '{{config["BB_ORIGIN"]}}' &&
         e.data &&
         e.data.targetInstantiationId === this.hiddenInstantiationId
       ) {
@@ -106,10 +106,6 @@ class BioBlocksFrameAPI {
         } else {
           //parent is initiating a new request
           console.log('({{hiddenInstantiationId}}) parent appears to be initiating a new request');
-          let request = payload;
-          //switch(request.fn){
-          //case('dataUpdated'): asdf
-          //}
         }
       } else {
         console.log(

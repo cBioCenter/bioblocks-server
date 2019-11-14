@@ -105,7 +105,7 @@ else:
     )
 
 #print('{0}/config.py'.format( os.path.dirname(os.path.abspath(__file__))))
-#app.config.from_object('config.ProductionConfig')
+# app.config.from_object('config.ProductionConfig')
 #print('FLASK_ENV is set to {0}'.format(app.config['ENV']))
 
 app.on_insert_instantiation += instantiation.handle_on_insert_instantiation

@@ -157,16 +157,46 @@ class BioBlocksFrameAPI {
       iframe.setAttribute('id', `${data.instantiationId}`);
       iframe.setAttribute('sandbox', 'allow-scripts');
       iframe.setAttribute('src', `http://0.0.0.0:11038/instantiation/${data.instantiationId}`);
+      iframe.setAttribute('height', '600');
+      iframe.setAttribute('width', '800');
       document.getElementById('parent_body').appendChild(iframe); //WORKS
-      setTimeout(() => {
+      const pingFn = () => {
         console.log('SENDING MESSAGE');
-        iframe.contentWindow.postMessage('hello', '*');
-      }, 2000);
+        const cryptoObj = window.crypto || window.msCrypto;
+        const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key 16 digits = 128 bit key
+        const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
+        iframe.contentWindow.window.postMessage(
+          {
+            key: instantiations[data.instantiationId].rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
+            payload: aesjs.utils.hex.fromBytes(
+              //convert encrypted bytes to hex for postMessage
+              aesCtr.encrypt(
+                //AES encrypt the object bytes
+                aesjs.utils.utf8.toBytes(
+                  //convert object string to bytes
+                  JSON.stringify({
+                    sharedCommunicationSecret: instantiations[data.instantiationId].sharedCommunicationSecret,
+                    viz: 'Contact Map',
+                  }),
+                ),
+              ),
+            ),
 
+            targetInstantiationId: data.hiddenInstantiationId,
+            viz: 'Contact Map',
+          },
+          '*',
+        );
+      };
+
+      setTimeout(pingFn, 5000);
+
+      /*
       //console.log('iframe.contentWindow:' + iframe.contentWindow); //FAILS
       iframe.contentWindow.addEventListener('message', e => {
         console.log('******************\nI AM SNOOPING!!!!!\n********************');
       });
+      */
     };
   }
 

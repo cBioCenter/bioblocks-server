@@ -1,7 +1,7 @@
 
 def handle_on_pre_GET_apps(resource, lookup):
     """Called when GET is received.
-    Searches for an app where the instantiation_id is the id in the url.
+    Searches for an app where the instantiationId is the id in the url.
     """
 
     print('---!~!~')
@@ -19,6 +19,8 @@ def handle_on_post_GET_apps(resource, payload):
     #                                                    {'$unset': {'instantiation_id': None}}, False)
     # Setting payload.data changes what the user receives.
     payload.content_type = 'text/javascript'
-    payload.data = 'console.log("hi from apps js")'
+    # payload.data = 'console.log("hi from apps js")'
+    payload.data = open(
+        '/Users/andrewd/Workspace/GitHub/MercifulCode/bioblocks-server/files/staticjs/bb/bioblocks-frame.js', 'r').read()
 
     print('handle_on_post_GET_apps, payload: {}'.format(payload))
