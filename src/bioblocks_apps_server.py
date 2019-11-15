@@ -21,18 +21,20 @@ def create_app(settings=settings_apps.get_bioblocks_apps_settings()):
                  validator=UUIDValidator.UUIDValidator)
     CORS(EveApp)
 
-    @EveApp.route('/js/<filename>')
+    @EveApp.route('/js/<path:filename>')
+    @EveApp.route('/bioblocks-api/<path:filename>')
     def static_javascript(filename):
-        return send_from_directory(static_folder, 'staticjs/{0}'.format(filename))
+        print('OI -> {} <-'.format(filename))
+        return send_from_directory(static_folder, 'js/{0}'.format(filename))
 
     @EveApp.route('/apps/<filename>')
     def static_bb_javascript(filename):
-        return send_from_directory(static_folder, 'staticjs/bb/{0}/index.js'.format(filename))
+        return send_from_directory(static_folder, 'js/bb/{0}/index.js'.format(filename))
 
     @EveApp.route('/instantiation/assets/<path:filename>')
     def static_bb_assets(filename):
         print(filename)
-        return send_from_directory(static_folder, 'staticjs/bb/assets/{0}'.format(filename))
+        return send_from_directory(static_folder, 'js/bb/assets/{0}'.format(filename))
 
     return EveApp
 

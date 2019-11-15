@@ -61,9 +61,10 @@ def create_app(settings=settings.get_bioblocks_settings()):
                  validator=UUIDValidator.UUIDValidator)
     CORS(EveApp)
 
-    @EveApp.route('/js/<filename>')
+    @EveApp.route('/js/<path:filename>')
+    @EveApp.route('/<path:filename>')
     def static_javascript(filename):
-        return send_from_directory(static_folder, 'staticjs/{0}'.format(filename))
+        return send_from_directory(static_folder, 'js/{0}'.format(filename))
 
     @EveApp.route('/spring/springViewer.html')
     def spring_index():

@@ -1,4 +1,6 @@
-class BioBlocksFrameAPI {
+import { BioblocksMessenger } from '/js/bioblocks-api/BioblocksMessenger.js';
+
+class BioblocksFrameTemplate {
   constructor() {
     console.log('({{hiddenInstantiationId}}) constructing BioBlocksFrameAPI');
     this.appId = '{{appId}}';
@@ -8,8 +10,8 @@ class BioBlocksFrameAPI {
     //setup RSA encryption
     this.rsaEncryptor = new JSEncrypt();
     this.rsaDecryptor = new JSEncrypt();
-    this.rsaEncryptor.setPublicKey(this.hex2ascii('{{parentPublicKey}}'));
-    this.rsaDecryptor.setPrivateKey(this.hex2ascii('{{framePrivateKey}}'));
+    this.rsaEncryptor.setPublicKey(BioblocksMessenger.hex2ascii('{{parentPublicKey}}'));
+    this.rsaDecryptor.setPrivateKey(BioblocksMessenger.hex2ascii('{{framePrivateKey}}'));
 
     //setup postMessage listeners
     this.setupPMListener();
@@ -117,12 +119,13 @@ class BioBlocksFrameAPI {
   }
 
   /**
-   * callFn: call a function through postMessage. returns a promise that will
-   *          resolve with the parent response or raise an error.
+   * @param {*} fn A function to be executed through postMessage.
+   * @param {*} payload Payload to be sent to the parent.
+   * @returns A promise that will resolve with the parent response or raise an error.
    */
   callFn(fn, payload) {
     //generate a unique message id, populate and encrypt data, execute postMessage call
-    const messageId = this.uuid();
+    const messageId = BioblocksMessenger.uuid();
     const unencryptedPayloadObj = Object.assign(
       {
         fn: fn,
@@ -171,28 +174,6 @@ class BioBlocksFrameAPI {
     };
     return promise;
   }
-
-  /**
-   * hex2ascii: convert a string that contains hex into ASCII
-   */
-  hex2ascii(hex = '') {
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2) {
-      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-    }
-    return str;
-  }
-
-  /**
-   * uuid: generate random UUID
-   */
-  uuid() {
-    function _p8(s) {
-      const p = (Math.random().toString(16) + '000000000').substr(2, 8);
-      return s ? '-' + p.substr(0, 4) + '-' + p.substr(4, 4) : p;
-    }
-    return _p8() + _p8(true) + _p8(true) + _p8();
-  }
 }
 
-export const bbAPI = new BioBlocksFrameAPI();
+export const bbAPI = new BioblocksFrameTemplate();

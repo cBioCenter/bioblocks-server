@@ -24,7 +24,7 @@ def handle_on_post_GET_communicator(resource, payload):
 
     # Setting payload.data changes what the user receives.
     payload.content_type = 'text/javascript'
-    payload.data = render_template('communicator.js',
+    payload.data = render_template('BioblocksFrameTemplate.js',
                                    appId=data['appId'],
                                    hiddenInstantiationId=data['hiddenInstantiationId'],
                                    sharedCommunicationSecret=data['sharedCommunicationSecret'],

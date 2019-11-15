@@ -80,7 +80,7 @@ def handle_on_post_GET_instantiation(resource, payload):
 
         # Setting payload.data changes what the user receives.
         payload.content_type = 'text/html'
-        payload.data = render_template('instantiation.html',
+        payload.data = render_template('bioblocks-frame-template.html',
                                        frameCommunicatorId=data['frameCommunicatorId'],
                                        appId=data['appId'])
 

@@ -1,12 +1,24 @@
-class BioBlocksFrameAPI {
+import { BioblocksMessenger } from '/js/bioblocks-api/BioblocksMessenger.js';
+
+/**
+ * Handles interactions between BioblocksFrames.
+ *
+ * @class BioblocksFrameBroker
+ */
+class BioblocksFrameBroker {
   constructor() {
     this.instantiations = {};
   }
 
-  addInstantiation(appId) {
+  /**
+   * Creates a new instantiation of a given app.
+   *
+   * @param {*} appId ID of app to instantiate a new iFrame for.
+   * @memberof BioblocksFrameBroker
+   */
+  addFrameForInstantiation(appId) {
     //fix class objects to local scope
     const instantiations = this.instantiations;
-    const hex2ascii = this.hex2ascii;
     const dispatchPostMessage = this.dispatchPostMessage;
 
     //post to bioblocks.org
@@ -17,7 +29,7 @@ class BioBlocksFrameAPI {
 
     xhr.onload = function() {
       const data = JSON.parse(this.responseText);
-      console.log('(parent) instantiation processed by server with response', data);
+      console.log('(broker) instantiation processed by server with response', data);
 
       //listen for the new apps messages
       instantiations[data.instantiationId] = {
@@ -30,8 +42,10 @@ class BioBlocksFrameAPI {
         rsaEncryptor: new JSEncrypt(),
         sharedCommunicationSecret: data.sharedCommunicationSecret,
       };
-      instantiations[data.instantiationId].rsaEncryptor.setPublicKey(hex2ascii(data.framePublicKey));
-      instantiations[data.instantiationId].rsaDecryptor.setPrivateKey(hex2ascii(data.parentPrivateKey));
+      instantiations[data.instantiationId].rsaEncryptor.setPublicKey(BioblocksMessenger.hex2ascii(data.framePublicKey));
+      instantiations[data.instantiationId].rsaDecryptor.setPrivateKey(
+        BioblocksMessenger.hex2ascii(data.parentPrivateKey),
+      );
 
       /**
        *  Listen for and respond to messages
@@ -81,7 +95,7 @@ class BioBlocksFrameAPI {
        *
        */
       window.addEventListener('message', e => {
-        console.log('(parent) message received with event:', e);
+        console.log('(broker) message received with event:', e);
         const instantiation = instantiations[data.instantiationId];
 
         if (e.data && e.data.instantiationId === instantiation.hiddenInstantiationId) {
@@ -90,7 +104,7 @@ class BioBlocksFrameAPI {
           // https://crypto.stackexchange.com/questions/14/how-can-i-use-asymmetric-encryption-such-as-rsa-to-encrypt-an-arbitrary-length
           const aesDecryptionKey = aesjs.utils.hex.toBytes(instantiation.rsaDecryptor.decrypt(e.data.key));
           if (!aesDecryptionKey) {
-            console.error('(parent) error: unable to decrypt aes key');
+            console.error('(broker) error: unable to decrypt aes key');
             dispatchPostMessage(e, instantiation.rsaEncryptor, e.data.messageId, instantiation.hiddenInstantiationId, {
               responseError: {
                 errorCode: 100,
@@ -107,7 +121,7 @@ class BioBlocksFrameAPI {
             aesjs.utils.utf8.fromBytes(aesCtr.decrypt(aesjs.utils.hex.toBytes(e.data.payload))),
           );
           if (!payload) {
-            console.error('(parent) unable to parse and decrypt payload from instantiation ', instantiation);
+            console.error('(broker) unable to parse and decrypt payload from instantiation ', instantiation);
 
             dispatchPostMessage(e, instantiation.rsaEncryptor, e.data.messageId, instantiation.hiddenInstantiationId, {
               responseError: {
@@ -119,14 +133,14 @@ class BioBlocksFrameAPI {
             return;
           }
 
-          console.log(`(parent) decrypted payload = ${payload}`);
+          console.log(`(broker) decrypted payload = ${payload}`);
           if (
             !payload.sharedCommunicationSecret ||
             payload.sharedCommunicationSecret !== instantiation.sharedCommunicationSecret
           ) {
             console.error(
-              `(parent) Invalid communication attempt from iframe. Communication secrets do not match:\n
-                - parent sharedCommunicationSecret = ${instantiation.sharedCommunicationSecret}\n
+              `(broker) Invalid communication attempt from iframe. Communication secrets do not match:\n
+                - broker sharedCommunicationSecret = ${instantiation.sharedCommunicationSecret}\n
                 - iFrame sharedCommunicationSecret = ${payload.sharedCommunicationSecret}`,
             );
 
@@ -140,7 +154,7 @@ class BioBlocksFrameAPI {
             return;
           }
 
-          console.log('(parent) iframe message received and validated');
+          console.log('(broker) iframe message received and validated');
           //TODO execute the requested function
 
           //respond with results
@@ -159,7 +173,7 @@ class BioBlocksFrameAPI {
       iframe.setAttribute('src', `http://0.0.0.0:11038/instantiation/${data.instantiationId}`);
       iframe.setAttribute('height', '600');
       iframe.setAttribute('width', '800');
-      document.getElementById('parent_body').appendChild(iframe); //WORKS
+      document.getElementById('bioblocks_frame_broker_body').appendChild(iframe); //WORKS
       const pingFn = () => {
         console.log('SENDING MESSAGE');
         const cryptoObj = window.crypto || window.msCrypto;
@@ -224,15 +238,6 @@ class BioBlocksFrameAPI {
       '*',
     ); //http://0.0.0.0:11038
   }
-
-  hex2ascii(hex = '') {
-    //convert hex to a string
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2) {
-      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-    }
-    return str;
-  }
 }
 
-export const bbAPI = new BioBlocksFrameAPI();
+export const FrameBroker = new BioblocksFrameBroker();

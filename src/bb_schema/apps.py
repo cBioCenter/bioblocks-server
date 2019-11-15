@@ -21,6 +21,6 @@ def handle_on_post_GET_apps(resource, payload):
     payload.content_type = 'text/javascript'
     # payload.data = 'console.log("hi from apps js")'
     payload.data = open(
-        '/Users/andrewd/Workspace/GitHub/MercifulCode/bioblocks-server/files/staticjs/bb/bioblocks-frame.js', 'r').read()
+        '/Users/andrewd/Workspace/GitHub/MercifulCode/bioblocks-server/files/js/bb/bioblocks-frame.js', 'r').read()
 
     print('handle_on_post_GET_apps, payload: {}'.format(payload))
