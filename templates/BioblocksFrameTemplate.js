@@ -1,3 +1,5 @@
+/// <reference path="../index.d.ts" />
+
 import { BioblocksMessenger } from '/js/bioblocks-api/BioblocksMessenger.js';
 
 class BioblocksFrameTemplate {
@@ -5,7 +7,14 @@ class BioblocksFrameTemplate {
     console.log('({{hiddenInstantiationId}}) constructing BioBlocksFrameAPI');
     this.appId = '{{appId}}';
     this.hiddenInstantiationId = '{{hiddenInstantiationId}}';
+    this.instantiationId = '{{instantiationId}}';
     this.sharedCommunicationSecret = '{{sharedCommunicationSecret}}';
+
+    /**
+     * System for monitoring postMessages and resolving/rejecting promises
+     * @type IMessagePromiseMap
+     */
+    this.messagePromises = {};
 
     //setup RSA encryption
     this.rsaEncryptor = new JSEncrypt();
@@ -35,16 +44,17 @@ class BioblocksFrameTemplate {
     );
   }
 
-  //
-  //
-  // MAIN FUNCTIONS EXPOSED TO APP
-  //
-  //
+  /**
+   * Main function exposed to app.
+   *
+   * @param {*} fn
+   * @memberof BioblocksFrameTemplate
+   */
   addDataUpdatedListener(fn) {
     if (!this.dataUpdatedListeners) {
-      this.dataUpdatedListeners = [];
+      this.dataUpdatedListeners = new Array();
     }
-    this.dataUpdatedListeners.append(fn);
+    this.dataUpdatedListeners.push(fn);
   }
 
   //
@@ -62,7 +72,6 @@ class BioblocksFrameTemplate {
    *                   them appropriately.
    */
   setupPMListener() {
-    //setup system for monitoring postMessages and resolving/rejecting promises
     this.messagePromises = {};
 
     //setup single async message listener

@@ -1,3 +1,5 @@
+/// <reference path="../../../index.d.ts" />
+
 import { BioblocksMessenger } from '/js/bioblocks-api/BioblocksMessenger.js';
 
 /**
@@ -7,13 +9,14 @@ import { BioblocksMessenger } from '/js/bioblocks-api/BioblocksMessenger.js';
  */
 class BioblocksFrameBroker {
   constructor() {
+    /** @type InstantiationMap */
     this.instantiations = {};
   }
 
   /**
    * Creates a new instantiation of a given app.
    *
-   * @param {*} appId ID of app to instantiate a new iFrame for.
+   * @param {string} appId ID of app to instantiate a new iFrame for.
    * @memberof BioblocksFrameBroker
    */
   addFrameForInstantiation(appId) {
@@ -42,6 +45,7 @@ class BioblocksFrameBroker {
         rsaEncryptor: new JSEncrypt(),
         sharedCommunicationSecret: data.sharedCommunicationSecret,
       };
+
       instantiations[data.instantiationId].rsaEncryptor.setPublicKey(BioblocksMessenger.hex2ascii(data.framePublicKey));
       instantiations[data.instantiationId].rsaDecryptor.setPrivateKey(
         BioblocksMessenger.hex2ascii(data.parentPrivateKey),
@@ -173,7 +177,10 @@ class BioblocksFrameBroker {
       iframe.setAttribute('src', `http://0.0.0.0:11038/instantiation/${data.instantiationId}`);
       iframe.setAttribute('height', '600');
       iframe.setAttribute('width', '800');
-      document.getElementById('bioblocks_frame_broker_body').appendChild(iframe); //WORKS
+      const brokerBody = document.getElementById('bioblocks_frame_broker_body');
+      if (brokerBody) {
+        brokerBody.appendChild(iframe); //WORKS
+      }
       const pingFn = () => {
         console.log('SENDING MESSAGE');
         const cryptoObj = window.crypto || window.msCrypto;

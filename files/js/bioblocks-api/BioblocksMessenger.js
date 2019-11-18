@@ -1,15 +1,10 @@
+/// <reference path="../../../index.d.ts" />
+
 /**
  * Handles reading and writing messages for consumption in the Bioblocks ecosystem.
- *
- * @export
- * @class BioblocksMessenger
- * @param {AESJS} foo
  */
 export class BioblocksMessenger {
   dispatchPostMessage(event, rsaEncryptor, messageId, hiddenInstantiationId, unencryptedPayloadObj) {
-    /** @type { import('../vendor/aesjs_3.1.2') } AESJS */
-    let aesjs;
-
     const cryptoObj = window.crypto || window.msCrypto;
     const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key
     const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
@@ -50,7 +45,7 @@ export class BioblocksMessenger {
    * @returns A randomly generated UUID.
    */
   static uuid() {
-    function _p8(s) {
+    function _p8(s = false) {
       const p = (Math.random().toString(16) + '000000000').substr(2, 8);
       return s ? '-' + p.substr(0, 4) + '-' + p.substr(4, 4) : p;
     }

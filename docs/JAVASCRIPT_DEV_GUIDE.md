@@ -32,6 +32,8 @@ let aesjs;
 
 Now your IDE should be able to get more info on the functions available to the aesjs object. See [this link in the TypeScript docs](https://www.typescriptlang.org/docs/handbook/type-checking-javascript-files.html) for more examples.
 
+We also include a minimal tsconfig.json file to allow for static type checking through your IDE or other personal workflow!
+
 ## Linting and Formatting
 
 Strictly speaking, linting and formatting rules are **not** enforced for the JavaScript. As mentioned above, there is no build step.

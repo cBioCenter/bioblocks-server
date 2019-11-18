@@ -20,25 +20,14 @@
     "max-line-length": [true, 140],
     "missing-jsdoc": false,
     "no-console": false,
-    "no-implicit-dependencies": [
-      true,
-      "dev",
-      ["~root", "~bioblocks-viz~", "__mocks__", "configs"]
-    ],
+    "no-implicit-dependencies": [true, "dev", ["~root", "~bioblocks-viz~", "__mocks__", "configs"]],
     "no-increment-decrement": false,
     "no-namespace": [true, "allow-declarations"],
     "no-redundant-jsdoc": true,
     "no-reference": false,
     "no-relative-imports": [true, "severity", "error"],
     "no-single-line-block-comment": false,
-    "no-submodule-imports": [
-      true,
-      "~root",
-      "~bioblocks-viz~",
-      "__mocks__",
-      "configs",
-      "plotly.js/dist/plotly"
-    ],
+    "no-submodule-imports": [true, "~root", "~bioblocks-viz~", "__mocks__", "configs", "plotly.js/dist/plotly"],
     "no-suspicious-comment": false,
     "no-var-keyword": true,
     "number-literal-format": false,
