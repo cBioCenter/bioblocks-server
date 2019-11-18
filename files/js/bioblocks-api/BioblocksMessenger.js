@@ -4,12 +4,29 @@
  * Handles reading and writing messages for consumption in the Bioblocks ecosystem.
  */
 export class BioblocksMessenger {
-  dispatchPostMessage(event, rsaEncryptor, messageId, hiddenInstantiationId, unencryptedPayloadObj) {
+  /**
+   * @param {Window} windowToPostTo
+   * @param {JSEncrypt} rsaEncryptor
+   * @param {string} messageId
+   * @param {string} hiddenInstantiationId
+   * @param {object} unencryptedPayloadObj
+   * @param {string} targetOrigin
+   * @memberof BioblocksMessenger
+   */
+  dispatchPostMessage(
+    windowToPostTo,
+    rsaEncryptor,
+    messageId,
+    hiddenInstantiationId,
+    unencryptedPayloadObj,
+    targetOrigin,
+  ) {
     const cryptoObj = window.crypto || window.msCrypto;
     const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key
     const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
-    event.source.postMessage(
+    windowToPostTo.postMessage(
       {
+        instantiationId: hiddenInstantiationId,
         //only post to a specific frame
         key: rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
         messageId: messageId,
@@ -25,7 +42,7 @@ export class BioblocksMessenger {
         ),
         targetInstantiationId: hiddenInstantiationId,
       },
-      '*',
+      targetOrigin,
     ); //http://0.0.0.0:11038
   }
 

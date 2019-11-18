@@ -22,7 +22,7 @@ class BioblocksFrameBroker {
   addFrameForInstantiation(appId) {
     //fix class objects to local scope
     const instantiations = this.instantiations;
-    const dispatchPostMessage = this.dispatchPostMessage;
+    const bioblocksMessenger = new BioblocksMessenger();
 
     //post to bioblocks.org
     const xhr = new XMLHttpRequest();
@@ -102,20 +102,27 @@ class BioblocksFrameBroker {
         console.log('(broker) message received with event:', e);
         const instantiation = instantiations[data.instantiationId];
 
-        if (e.data && e.data.instantiationId === instantiation.hiddenInstantiationId) {
+        if (e.source instanceof Window && e.data && e.data.instantiationId === instantiation.hiddenInstantiationId) {
           //the aes key is decrypted by the frame with RSA as RSA has a severe
           //length restriction
           // https://crypto.stackexchange.com/questions/14/how-can-i-use-asymmetric-encryption-such-as-rsa-to-encrypt-an-arbitrary-length
           const aesDecryptionKey = aesjs.utils.hex.toBytes(instantiation.rsaDecryptor.decrypt(e.data.key));
           if (!aesDecryptionKey) {
             console.error('(broker) error: unable to decrypt aes key');
-            dispatchPostMessage(e, instantiation.rsaEncryptor, e.data.messageId, instantiation.hiddenInstantiationId, {
-              responseError: {
-                errorCode: 100,
-                errorDesc: 'unable to decrypt key',
+            bioblocksMessenger.dispatchPostMessage(
+              e.source,
+              instantiation.rsaEncryptor,
+              e.data.messageId,
+              instantiation.hiddenInstantiationId,
+              {
+                responseError: {
+                  errorCode: 100,
+                  errorDesc: 'unable to decrypt key',
+                },
+                sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
               },
-              sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
-            });
+              '*',
+            );
             return;
           }
 
@@ -127,13 +134,20 @@ class BioblocksFrameBroker {
           if (!payload) {
             console.error('(broker) unable to parse and decrypt payload from instantiation ', instantiation);
 
-            dispatchPostMessage(e, instantiation.rsaEncryptor, e.data.messageId, instantiation.hiddenInstantiationId, {
-              responseError: {
-                errorCode: 101,
-                errorDesc: 'unable to parse and decrypt payload',
+            bioblocksMessenger.dispatchPostMessage(
+              e.source,
+              instantiation.rsaEncryptor,
+              e.data.messageId,
+              instantiation.hiddenInstantiationId,
+              {
+                responseError: {
+                  errorCode: 101,
+                  errorDesc: 'unable to parse and decrypt payload',
+                },
+                sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
               },
-              sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
-            });
+              '*',
+            );
             return;
           }
 
@@ -148,13 +162,20 @@ class BioblocksFrameBroker {
                 - iFrame sharedCommunicationSecret = ${payload.sharedCommunicationSecret}`,
             );
 
-            dispatchPostMessage(e, instantiation.rsaEncryptor, e.data.messageId, instantiation.hiddenInstantiationId, {
-              responseError: {
-                errorCode: 102,
-                errorDesc: 'sharedCommunicationSecret fields do not match.',
+            bioblocksMessenger.dispatchPostMessage(
+              e.source,
+              instantiation.rsaEncryptor,
+              e.data.messageId,
+              instantiation.hiddenInstantiationId,
+              {
+                responseError: {
+                  errorCode: 102,
+                  errorDesc: 'sharedCommunicationSecret fields do not match.',
+                },
+                sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
               },
-              sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
-            });
+              '*',
+            );
             return;
           }
 
@@ -162,12 +183,19 @@ class BioblocksFrameBroker {
           //TODO execute the requested function
 
           //respond with results
-          dispatchPostMessage(e, instantiation.rsaEncryptor, e.data.messageId, instantiation.hiddenInstantiationId, {
-            sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
-            successData: {
-              'the payload key': 'this is the value of the payload key',
+          bioblocksMessenger.dispatchPostMessage(
+            e.source,
+            instantiation.rsaEncryptor,
+            e.data.messageId,
+            instantiation.hiddenInstantiationId,
+            {
+              sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
+              successData: {
+                'the payload key': 'this is the value of the payload key',
+              },
             },
-          });
+            '*',
+          );
         }
       });
 
@@ -182,27 +210,12 @@ class BioblocksFrameBroker {
         brokerBody.appendChild(iframe); //WORKS
       }
       const pingFn = () => {
+        if (!iframe.contentWindow) {
+          return;
+        }
         console.log('SENDING MESSAGE');
-        const cryptoObj = window.crypto || window.msCrypto;
-        const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key 16 digits = 128 bit key
-        const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
         iframe.contentWindow.window.postMessage(
           {
-            key: instantiations[data.instantiationId].rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
-            payload: aesjs.utils.hex.fromBytes(
-              //convert encrypted bytes to hex for postMessage
-              aesCtr.encrypt(
-                //AES encrypt the object bytes
-                aesjs.utils.utf8.toBytes(
-                  //convert object string to bytes
-                  JSON.stringify({
-                    sharedCommunicationSecret: instantiations[data.instantiationId].sharedCommunicationSecret,
-                    viz: 'Contact Map',
-                  }),
-                ),
-              ),
-            ),
-
             targetInstantiationId: data.hiddenInstantiationId,
             viz: 'Contact Map',
           },
@@ -219,31 +232,6 @@ class BioblocksFrameBroker {
       });
       */
     };
-  }
-
-  dispatchPostMessage(event, rsaEncryptor, messageId, hiddenInstantiationId, unencryptedPayloadObj) {
-    const cryptoObj = window.crypto || window.msCrypto;
-    const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key
-    const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
-    event.source.postMessage(
-      {
-        //only post to a specific frame
-        key: rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
-        messageId: messageId,
-        payload: aesjs.utils.hex.fromBytes(
-          //convert encrypted bytes to hex for postMessage
-          aesCtr.encrypt(
-            //AES encrypt the object bytes
-            aesjs.utils.utf8.toBytes(
-              //convert object string to bytes
-              JSON.stringify(unencryptedPayloadObj),
-            ),
-          ),
-        ),
-        targetInstantiationId: hiddenInstantiationId,
-      },
-      '*',
-    ); //http://0.0.0.0:11038
   }
 }
 

@@ -42,11 +42,10 @@
     "unencrypted",
     "xenopus"
   ],
-  "files.autoSave": "afterDelay",
+  "editor.formatOnSave": true,
   "python.analysis.logLevel": "Information",
   "python.linting.flake8Args": ["--inline-quotes=single"],
   "python.linting.enabled": true,
-  "python.linting.flake8CategorySeverity.Q": "Error",
   "python.linting.flake8CategorySeverity.W": "Error",
   "python.linting.flake8Enabled": true,
   "python.linting.pylintEnabled": false,

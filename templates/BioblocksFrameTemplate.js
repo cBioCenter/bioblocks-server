@@ -15,6 +15,7 @@ class BioblocksFrameTemplate {
      * @type IMessagePromiseMap
      */
     this.messagePromises = {};
+    this.messenger = new BioblocksMessenger();
 
     //setup RSA encryption
     this.rsaEncryptor = new JSEncrypt();
@@ -76,7 +77,7 @@ class BioblocksFrameTemplate {
 
     //setup single async message listener
     window.addEventListener('message', e => {
-      console.log('({{hiddenInstantiationId}}) message received in iframe:', e);
+      console.log('Bioblocks Frame ({{hiddenInstantiationId}}) message received in iframe:', e);
 
       //is this message aimed at this instantiation
       if (
@@ -91,7 +92,7 @@ class BioblocksFrameTemplate {
         let aesCtr = new aesjs.ModeOfOperation.ctr(aesDecryptionKey);
         const payload = JSON.parse(aesjs.utils.utf8.fromBytes(aesCtr.decrypt(aesjs.utils.hex.toBytes(e.data.payload))));
 
-        console.log('({{hiddenInstantiationId}}) instantiation received payload:', payload);
+        console.log('Bioblocks Frame ({{hiddenInstantiationId}}) instantiation received payload:', payload);
         if (payload.sharedCommunicationSecret !== this.sharedCommunicationSecret) {
           console.error(
             '({{hiddenInstantiationId}}) Invalid communication attempt from parent. Communication secrets do not match:',
@@ -110,17 +111,17 @@ class BioblocksFrameTemplate {
             promise.reject('postMessage error: parent returned error:', payload.responseError.errorDesc);
             return;
           } else {
-            console.log('({{hiddenInstantiationId}}) promise:', promise);
+            console.log('Bioblocks Frame ({{hiddenInstantiationId}}) promise:', promise);
             promise.resolve(payload.successData);
             return;
           }
         } else {
           //parent is initiating a new request
-          console.log('({{hiddenInstantiationId}}) parent appears to be initiating a new request');
+          console.log('Bioblocks Frame ({{hiddenInstantiationId}}) parent appears to be initiating a new request');
         }
       } else {
         console.log(
-          '({{hiddenInstantiationId}}) postMessage detected not targeted at this instantiation',
+          'Bioblocks Frame ({{hiddenInstantiationId}}) postMessage detected not targeted at this instantiation',
           this.instantiationId,
         );
       }
@@ -149,29 +150,15 @@ class BioblocksFrameTemplate {
     let promiseResolve;
     let promiseReject;
     const promise = new Promise((resolve, reject) => {
-      const cryptoObj = window.crypto || window.msCrypto;
-      const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key
-      const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
-
-      //console.log('sending message '+messageId+' to window ', window.parent);
-      window.parent.postMessage(
-        {
-          instantiationId: hiddenInstantiationId,
-          key: rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
-          messageId: messageId,
-          payload: aesjs.utils.hex.fromBytes(
-            //convert encrypted bytes to hex for postMessage
-            aesCtr.encrypt(
-              //AES encrypt the object bytes
-              aesjs.utils.utf8.toBytes(
-                //convert object string to bytes
-                JSON.stringify(unencryptedPayloadObj),
-              ),
-            ),
-          ),
-        },
+      this.messenger.dispatchPostMessage(
+        window.parent,
+        rsaEncryptor,
+        messageId,
+        hiddenInstantiationId,
+        unencryptedPayloadObj,
         '{{config["BB_ORIGIN"]}}',
       );
+
       promiseResolve = resolve;
       promiseReject = reject;
     });
