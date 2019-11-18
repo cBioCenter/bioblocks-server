@@ -4,12 +4,12 @@ import { BioblocksMessenger } from '/js/bioblocks-api/BioblocksMessenger.js';
 
 class BioblocksFrameTemplate {
   constructor() {
-    console.log('({{hiddenInstantiationId}}) constructing BioBlocksFrameAPI');
     this.appId = '{{appId}}';
     this.hiddenInstantiationId = '{{hiddenInstantiationId}}';
     this.instantiationId = '{{instantiationId}}';
     this.sharedCommunicationSecret = '{{sharedCommunicationSecret}}';
 
+    console.log(`(${this.hiddenInstantiationId}) constructing BioBlocksFrameAPI`);
     /**
      * System for monitoring postMessages and resolving/rejecting promises
      * @type IMessagePromiseMap
@@ -34,11 +34,11 @@ class BioblocksFrameTemplate {
     this.callFn('initialize', { 'my test key': 'has a value!!' }).then(
       response => {
         //initialization succeeded
-        console.log('({{hiddenInstantiationId}}) initialization succeeded', response);
+        console.log(`(${this.hiddenInstantiationId}) initialization succeeded`, response);
       },
       err => {
         //initialization failed
-        console.error('({{hiddenInstantiationId}}) communication with bioblocks failed', err);
+        console.error(`(${this.hiddenInstantiationId}) communication with bioblocks failed`, err);
         delete this.rsaEncryptor;
         delete this.rsaDecryptor;
       },
@@ -77,7 +77,7 @@ class BioblocksFrameTemplate {
 
     //setup single async message listener
     window.addEventListener('message', e => {
-      console.log('Bioblocks Frame ({{hiddenInstantiationId}}) message received in iframe:', e);
+      console.log(`Bioblocks Frame (${this.hiddenInstantiationId}) message received in iframe:`, e);
 
       //is this message aimed at this instantiation
       if (
@@ -92,10 +92,10 @@ class BioblocksFrameTemplate {
         let aesCtr = new aesjs.ModeOfOperation.ctr(aesDecryptionKey);
         const payload = JSON.parse(aesjs.utils.utf8.fromBytes(aesCtr.decrypt(aesjs.utils.hex.toBytes(e.data.payload))));
 
-        console.log('Bioblocks Frame ({{hiddenInstantiationId}}) instantiation received payload:', payload);
+        console.log(`Bioblocks Frame (${this.hiddenInstantiationId}) instantiation received payload:`, payload);
         if (payload.sharedCommunicationSecret !== this.sharedCommunicationSecret) {
           console.error(
-            '({{hiddenInstantiationId}}) Invalid communication attempt from parent. Communication secrets do not match:',
+            `Bioblocks Frame (${this.hiddenInstantiationId}) Invalid communication attempt from parent. Shared secrets do not match:`,
           );
           console.error(` - parent sharedCommunicationSecret = ${payload.sharedCommunicationSecret}`);
           console.error(` - iFrame sharedCommunicationSecret = ${this.sharedCommunicationSecret}`);
@@ -111,17 +111,17 @@ class BioblocksFrameTemplate {
             promise.reject('postMessage error: parent returned error:', payload.responseError.errorDesc);
             return;
           } else {
-            console.log('Bioblocks Frame ({{hiddenInstantiationId}}) promise:', promise);
+            console.log(`Bioblocks Frame (${this.hiddenInstantiationId}) promise:`, promise);
             promise.resolve(payload.successData);
             return;
           }
         } else {
           //parent is initiating a new request
-          console.log('Bioblocks Frame ({{hiddenInstantiationId}}) parent appears to be initiating a new request');
+          console.log(`Bioblocks Frame (${this.hiddenInstantiationId}) parent appears to be initiating a new request`);
         }
       } else {
         console.log(
-          'Bioblocks Frame ({{hiddenInstantiationId}}) postMessage detected not targeted at this instantiation',
+          `Bioblocks Frame (${this.hiddenInstantiationId}) postMessage detected not targeted at this instantiation`,
           this.instantiationId,
         );
       }
