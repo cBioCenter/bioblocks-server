@@ -89,7 +89,6 @@ def handle_on_post_GET_instantiation(resource, payload):
 
 def handle_on_post_POST_instantiation(resource, payload):
     """ Called when response from POST is about to be sent. """
-    # from src import bioblocks_server
 
     data = json.loads(payload.response[0])
     if ('parentPrivateKey' in data) and ('framePublicKey' in data):

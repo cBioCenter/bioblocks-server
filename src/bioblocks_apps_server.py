@@ -24,7 +24,6 @@ def create_app(settings=settings_apps.get_bioblocks_apps_settings()):
     @EveApp.route('/js/<path:filename>')
     @EveApp.route('/bioblocks-api/<path:filename>')
     def static_javascript(filename):
-        print('OI -> {} <-'.format(filename))
         return send_from_directory(static_folder, 'js/{0}'.format(filename))
 
     @EveApp.route('/apps/<filename>')

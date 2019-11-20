@@ -5,11 +5,11 @@
  */
 export class BioblocksMessenger {
   /**
-   * @param {Window} windowToPostTo
+   * @param {Window | object} windowToPostTo
    * @param {JSEncrypt} rsaEncryptor
    * @param {string} messageId
    * @param {string} hiddenInstantiationId
-   * @param {object} unencryptedPayloadObj
+   * @param {IBioblocksResponsePayload} unencryptedPayloadObj
    * @param {string} targetOrigin
    * @memberof BioblocksMessenger
    */
@@ -22,28 +22,28 @@ export class BioblocksMessenger {
     targetOrigin,
   ) {
     const cryptoObj = window.crypto || window.msCrypto;
-    const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key
+    const aesKeyBytes = cryptoObj.getRandomValues(new Uint8Array(16)); // 16 digits = 128 bit key.
     const aesCtr = new aesjs.ModeOfOperation.ctr(aesKeyBytes);
-    windowToPostTo.postMessage(
-      {
-        instantiationId: hiddenInstantiationId,
-        //only post to a specific frame
-        key: rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
-        messageId: messageId,
-        payload: aesjs.utils.hex.fromBytes(
-          //convert encrypted bytes to hex for postMessage
-          aesCtr.encrypt(
-            //AES encrypt the object bytes
-            aesjs.utils.utf8.toBytes(
-              //convert object string to bytes
-              JSON.stringify(unencryptedPayloadObj),
-            ),
+
+    /** @type IBioblocksMessage */
+    const message = {
+      instantiationId: hiddenInstantiationId,
+      // Only post to a specific frame.
+      key: rsaEncryptor.encrypt(aesjs.utils.hex.fromBytes(aesKeyBytes)),
+      messageId: messageId,
+      payload: aesjs.utils.hex.fromBytes(
+        // Convert encrypted bytes to hex for postMessage.
+        aesCtr.encrypt(
+          // AES encrypt the object bytes.
+          aesjs.utils.utf8.toBytes(
+            // Convert object string to bytes.
+            JSON.stringify(unencryptedPayloadObj),
           ),
         ),
-        targetInstantiationId: hiddenInstantiationId,
-      },
-      targetOrigin,
-    ); //http://0.0.0.0:11038
+      ),
+      targetInstantiationId: hiddenInstantiationId,
+    };
+    windowToPostTo.postMessage(message, targetOrigin); // http://0.0.0.0:11038
   }
 
   /**
@@ -61,7 +61,7 @@ export class BioblocksMessenger {
   /**
    * @returns A randomly generated UUID.
    */
-  static uuid() {
+  static generateNewUUID() {
     function _p8(s = false) {
       const p = (Math.random().toString(16) + '000000000').substr(2, 8);
       return s ? '-' + p.substr(0, 4) + '-' + p.substr(4, 4) : p;
