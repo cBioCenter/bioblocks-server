@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DropdownProps } from 'semantic-ui-react';
 import { Set } from 'immutable';
 import { IUMAPVisualizationProps } from '../component';
+import { BioblocksVisualization } from './';
 import { ILabel, SeqRecord } from '../data';
 export interface IUMAPSequenceContainerProps extends Partial<IUMAPVisualizationProps> {
     /** if the number of data points are too large, the container will randomly subsample points */
@@ -34,7 +35,7 @@ export interface IUMAPSequenceContainerState {
     subsampledSequences: SeqRecord[];
     tooltipNames: string[];
 }
-export declare class UMAPSequenceContainerClass extends React.Component<IUMAPSequenceContainerProps, IUMAPSequenceContainerState> {
+export declare class UMAPSequenceContainerClass extends BioblocksVisualization<IUMAPSequenceContainerProps, IUMAPSequenceContainerState> {
     static defaultProps: {
         currentCells: Set<number>;
         labelCategory: string;
@@ -44,6 +45,7 @@ export declare class UMAPSequenceContainerClass extends React.Component<IUMAPSeq
         showUploadButton: boolean;
     };
     constructor(props: IUMAPSequenceContainerProps);
+    setupDataServices(): void;
     componentDidMount(): void;
     componentDidUpdate(prevProps: IUMAPSequenceContainerProps, prevState: IUMAPSequenceContainerState): void;
     render(): JSX.Element;

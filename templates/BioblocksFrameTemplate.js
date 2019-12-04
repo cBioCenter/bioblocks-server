@@ -62,7 +62,8 @@ class BioblocksFrameTemplate {
         delete this.rsaDecryptor;
       },
     );
-    window.addEventListener('load', this.onDocumentLoad);
+    this.messagePromises[Object.keys(this.messagePromises)[0]].resolve();
+    // window.addEventListener('load', this.onDocumentLoad);
   }
 
   /**
@@ -202,7 +203,7 @@ class BioblocksFrameTemplate {
       } else {
         console.log(`Bioblocks Frame (${this.hiddenInstantiationId}): Broker appears to be initiating a new request`);
         window.dispatchEvent(
-          new MessageEvent('message', {
+          new MessageEvent('bb-message', {
             data: payload.successData,
           }),
         );

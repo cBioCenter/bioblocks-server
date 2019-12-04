@@ -101,8 +101,8 @@ class BioblocksFrameBroker {
       iframe.setAttribute('id', `${data.instantiationId}`);
       iframe.setAttribute('sandbox', 'allow-scripts');
       iframe.setAttribute('src', `http://0.0.0.0:11038/instantiation/${data.instantiationId}`);
-      iframe.setAttribute('height', '615');
-      iframe.setAttribute('width', '620');
+      iframe.setAttribute('height', '600');
+      iframe.setAttribute('width', '800');
       const brokerBody = document.getElementById('bioblocks_frame_broker_body');
       if (brokerBody) {
         brokerBody.appendChild(iframe); // WORKS.
@@ -116,15 +116,76 @@ class BioblocksFrameBroker {
         this.dispatchMessageToInstantiation(instantiation, BioblocksMessenger.generateNewUUID(), {
           sharedCommunicationSecret: instantiation.sharedCommunicationSecret,
           successData: {
-            viz: 'Contact Map',
-            vizData: {
-              couplingScores: [
-                { cn: 0.5, i: 1, j: 2, dist: 1 },
-                { cn: 0.5, i: 2, j: 1, dist: 1 },
-                { cn: 0.7, i: 3, j: 4, dist: 5 },
-                { cn: 0.2, i: 8, j: 9, dist: 7 },
-              ],
-            },
+            annotations: [
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+              'even',
+              'odd',
+            ],
+            names: [
+              'One',
+              'Two',
+              'Three',
+              'Four',
+              'Five',
+              'Six',
+              'Seven',
+              'Eight',
+              'Nine',
+              'Ten',
+              'Eleven',
+              'Tweleve',
+              'Thirteen',
+              'Fourteen',
+              'Fifteen',
+              'Sixteen',
+              'Seventeen',
+              'Eighteen',
+              'Nineteen',
+              'Twenty',
+              'Twenty One',
+            ],
+            seqs: [
+              'KSAKDALLLWCQMKTAGYPNVNIHNFTTSWRDGMAFNALIHKHRPDLIDFDKLKKSNAHYNLQNAFNLAEQHLGLTKLLDPEDISVDHPDEKSIITYVVTYYHYFSKM',
+              'LRTTIYMVSDIVEATEWYTKAFNTKPYFN-EPFYIGFNIGGYELGLQSEERDINSKTENNDINEAYNLGGTKHEEPNDVGDDILSLYDPWNNII----GIIYNPNFKL',
+              '--MXDYAKLWCALXLMLGTSITISSSHWVEINTLAIIPLISKSHHPRAIEASIKYFLVQ-AAASILAWHTGQWDITQLNHPASSLTTAIAMKLG----LVPFHFWFPE',
+              'MRAIITFALFCVQGKTSSPKVQVYSHFPGYGKENTLICHVSGFHPPDITIELLKDGEILQQTDLAF---EKGWQFHLTKSVTFKRGQNYACSVRHMNNKNIYSWEPNM',
+              'AYDDLNVKRIAVISVISILVTAVTVLAVQ-VLYFAMADIVDGRKVQSASYTRQNAVLAESDEISRY---GVDPDTGNVTVPVEDAMKKMVKEAG---------SHDEA',
+              'VVYIDDEEMLCQMFKEYLHSDEINLAVFT--DEEPGIEYCNNSNPDLIFIDYRLKKQNGTDVANAI--TSDSIKILITGELDVTTCFDHKIEKPDIKNFIVEAFENKG',
+              'LIKQDSYFSDSSILILGSNNGQLHFYDWS--SGYKYDTLTNKVVPGTVDCENSTLSMAFDKSESRL-ITTHGDKSIKIWKENEDATPENFPIKW----NPYENFKF--',
+              'EPEVQAFFLFAQALTAELYPRSFVNRHLG-KLSLEVTDIDTQFGLLEGFFVPLYQFHTIVDLALDL-MRDSGLKFYAKTEDIIKLKSTLRIVYS-----LFQKYKHLK',
+              'MNSGDATRLHC---SNAHAKQTLATLFAN-RNHSTFYEYAIAFVSTLLFKNNLNLMSAC-NLINSLNFELNMFGKSLLLNGFVNNSDGVTIQHKMLTNVLSFLLEKYY',
+              'MNSGDATRLHC---SNAHAKQTLATLFAN-RNHSSFYEYAIAFVSTLLFKNNLNLMTAC-NLINSLNFELNMFGKSLLLNGFVNNSDGVTIQHKMLTNVLSFLLEKYY',
+              'MEDSESIAGYP--TLSGLPIQSSLPFASAFSSLPPIVHLTRDTVAASVTASATAPFNSIYNTAPEF---VTASPLLYTGDAFKIQPSTLFSFLA-----PILGLYMAV',
+              'TSANSGSLSWHLTASSSKEAMAFYSQVFG-WKFKTIVVAHAPYHIIINDGVDIGGIAQSSNWTGYIAEKAHELGATILFGPEDIIGRFCWLKDP-QGAIIAAISYLSL',
+              'AVAHFLYYAHIYILFRRYDNDATLYSMKA-EDNSNINKLHLKV-HNPNKYDELINTLWNSNITKDFFIYEKIARVYDPNLVMVQHRIKNDTLEF---QGYFYAFAAKV',
+              'ALVQAQLEAYNQHDLANFVSQFSEDICIY-RPPATEPVIQGKAAFRYFYQNERFNLPHLAEILNRMVVGNKVVDHERISGIHDEEVMVVFEVSD----GLIQNMWSFA',
+              'ISHVYNYTVRCQVKDPAHPTSWRNHIELN-RSCEIALDRITKWGHSGNRLFEHDGYVVRCEQEQAYRLNDDKHALVTFKVFMDNKDVSVQEIME----HVIEDYKSRL',
+              'MNASQVNKSWS--VLQGKMAESFDMDIPD-IKVMLFLIGVQELGKGPQTFSKREKEELMIATCKLF----SAMGFYELQGVDQELVKPIPNYTLLIIKSLIVDYFQEM',
+              'MSSKSKILFYG-FSTTDLKNLDIKYDMVN--INEQMEDMIIKDILELNTNENIDKDKKENELNNIIRKHLGKEPILAVVTPISITFSDLKKELI----RERNYYNNLK',
+              'KNADNQMILWN-YLDNDHPPMIELRLNGN-GHNEHDKQRDHEYESKPAARRYLNDTNDNEEYQENH---HQRSGADSARQKLLRGPGEIQYQHH---DCSQHHHQHHS',
+              'DNLKNIPFFLC-QVVEDKENKDIDIYYLG-KRVFHDYDHVGHYRSAIILFRRIKNRTADVNLQNLWENYNHGIGVDSLIYGEDFDGENPETLTPKKRFDLIVKRIQEL',
+              'NNLKNIPFFLC-QVVEDEENKDIDIYYLG-ERVLHDYDHVGHYRSAIILFRRIKNRTADVNLQNLWCIRENYNHGIGVDSLIYGTLTPLTKKRFDLIVKRIKELDKYA',
+              'MQQNSYLWIWC-WAINSYNDINKNFKMLD----SQLLDCLRNSYDEIVDIDFSKSFSDNLDSLDVFSEVESETGISIEDDELQETPAQLLHLIT-----------SKQ',
+            ],
+            viz: 'UMAP Sequence',
           },
         });
       }
