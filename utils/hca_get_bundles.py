@@ -20,8 +20,9 @@ session.mount('https://', adapter)
 path = os.getcwd()
 
 urlQuery = parse.urlencode({
-    'replica': 'aws',
-    '\"filters\"': {'\"fileFormat\"': {'\"is\"': ['\"matrix\"']}},
+    'filters': '{\"fileFormat\": {\"is\": [\"matrix\"]}}',
+    'order': 'asc',
+    'sort': 'projectTitle',
     'size': '50',
 })
 

@@ -50,3 +50,21 @@ pipenv run start
    ```sh
    circleci local execute --job build
    ```
+
+6. Service file
+
+```service
+[Unit]
+Description=uWSGI instance to serve bioblock$
+After=network.target
+
+[Service]
+User=chell
+Group=nginx
+WorkingDirectory=/home/chell/git/bioblocks-s$
+Environment="PATH=/home/chell/venv/bioblocks$
+ExecStart=/home/chell/venv/bioblocks-server/$
+
+[Install]
+WantedBy=multi-user.target
+```
