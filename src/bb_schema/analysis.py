@@ -9,6 +9,7 @@ schema = {
         'allowed': [
             'SPRING',
             'TSNE',
+            'UMAP',
         ],
         'required': True,
         'type': 'string'

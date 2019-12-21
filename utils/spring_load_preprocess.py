@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import numpy as np
+from scipy.io import mminfo
 
 from bioblocks_logger import bioblocks_log
 from portal_spring_helper import *
@@ -62,10 +63,19 @@ def run_spring_preprocessing(
 
     # Load expression matrix - supporting mtx files, but I also have code for
     # many other formats. Let me know if you want something more flexible.
-    E = up.load_mtx(mtx_file)
+    mtx_info = mminfo(mtx_file)
+    bioblocks_log(mtx_info)
+    bioblocks_log(mtx_info[2])
+    if mtx_info[2] > MAX_CELLS_COUNT:
+        bioblocks_log('Not running SPRING - # of cells is {}, maximum allowed is {}'.format(mtx_info[0], MAX_CELLS_COUNT))
+        return
+
+    E = up.load_mtx(mtx_file).resize((2000, 2000))
     gene_list = load_genes(gene_file,
                            delimiter='\t' if gene_file.endswith('tsv') else None,
                            skip_rows=1 if gene_file.endswith('tsv') else 0)
+    if len(gene_list) > 10000:
+        gene_list = gene_list[:10000]
 
     num_rows = E.shape[0]
 
