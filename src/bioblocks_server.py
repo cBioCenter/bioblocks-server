@@ -7,6 +7,7 @@ from flask_cors import CORS
 from os.path import dirname
 from src import settings
 from src.data import UUIDEncoder, UUIDValidator
+from utils.bioblocks_logger import bioblocks_log
 
 static_folder = '{}/../files'.format(
     os.path.dirname(os.path.abspath(__file__)))
@@ -80,6 +81,9 @@ def create_app(settings=settings.get_bioblocks_settings()):
 
 
 app = create_app()
+
+bioblocks_log('Successfully created job \'{}\''.format(app))
+bioblocks_log('Successfully created job \'{}\''.format(app.config))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=11037)

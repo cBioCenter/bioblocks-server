@@ -1,14 +1,41 @@
 {
   "$schema": "../utils/bioblocks_json_schema.json",
+  "analyses": [
+    {
+      "_id": "aaaaaaaa-0000-0000-0001-a1234567890b",
+      "processType": "SPRING"
+    },
+    {
+      "_id": "aaaaaaaa-0000-0000-0002-a1234567890b",
+      "processType": "TSNE"
+    },
+    {
+      "_id": "aaaaaaaa-0000-0000-0003-a1234567890b",
+      "processType": "SPRING"
+    },
+    {
+      "_id": "aaaaaaaa-0000-0000-0004-a1234567890b",
+      "processType": "TSNE"
+    }
+  ],
   "datasets": [
     {
       "_id": "bbdeeded-0000-0000-0001-a1234567890b",
+      "analyses": [
+        "aaaaaaaa-0000-0000-0001-a1234567890b",
+        "aaaaaaaa-0000-0000-0002-a1234567890b"
+      ],
       "authors": ["Caleb Weinreb", "Samuel Wolock", "Allon Klein"],
       "name": "Hematopoietic Progenitor Cells",
       "species": "homo_sapiens"
     },
     {
       "_id": "bbdeeded-0000-0000-0002-a1234567890b",
+      "analyses": [
+        "aaaaaaaa-0000-0000-0003-a1234567890b",
+        "aaaaaaaa-0000-0000-0004-a1234567890b"
+      ],
+
       "authors": ["HCA"],
       "name": "Tabula Muris",
       "species": "mus_musculus"
@@ -78,25 +105,24 @@
   ],
   "vignettes": [
     {
+      "_id": "bbdecade-0000-0000-0002-a1234567890b",
+      "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
+      "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
+      "icon": "assets/icons/example_HPC_spring-tsne-anatomogram.png",
+      "name": "HPC - SPRING vs UMAP",
+      "summary": "Example interaction between SPRING, tSNE and Anatomogram visualization on a small dataset.",
+      "visualizations": [
+        "bbfacade-0000-0000-0001-a1234567890b",
+        "bbfacade-0000-0000-0004-a1234567890b"
+      ]
+    },
+    {
       "_id": "bbdecade-0000-0000-0001-a1234567890b",
       "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
       "dataset": "bbdeeded-0000-0000-0002-a1234567890b",
       "icon": "assets/icons/example_tabularmuris_spring-tsne-anatomogram.png",
       "name": "Tabula Muris - SPRING vs tSNE with Anatomogram",
       "summary": "Example comparison of data reduction techniques SPRING and tSNE (of top 30 PCA components), on RNAseq profiles from 10000 cells from the CZI Tabula muris dataset. Also includes anatomogram visualization for selection of tissue types.",
-      "visualizations": [
-        "bbfacade-0000-0000-0001-a1234567890b",
-        "bbfacade-0000-0000-0002-a1234567890b",
-        "bbfacade-0000-0000-0003-a1234567890b"
-      ]
-    },
-    {
-      "_id": "bbdecade-0000-0000-0002-a1234567890b",
-      "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
-      "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
-      "icon": "assets/icons/example_HPC_spring-tsne-anatomogram.png",
-      "name": "HPC - SPRING vs tSNE with Anatomogram",
-      "summary": "Example interaction between SPRING, tSNE and Anatomogram visualization on a small dataset.",
       "visualizations": [
         "bbfacade-0000-0000-0001-a1234567890b",
         "bbfacade-0000-0000-0002-a1234567890b",

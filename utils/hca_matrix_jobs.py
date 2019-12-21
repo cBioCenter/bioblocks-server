@@ -86,14 +86,14 @@ def handle_hca_matrix_job_status(job):
     else:
         result = json.loads(r.text)
         if result['status'] == 'In Progress':
-            print('IN PROGRESS')
+            bioblocks_log('IN PROGRESS')
             bioblocks_log('Job \'{}\' is still in progress'.format(job_id))
         elif result['status'] == 'Failed':
-            print('FAILED')
+            bioblocks_log('FAILED')
             bioblocks_log('Job \'{}\' failed with message \'{}\''.format(job_id, result['message']))
             delete_bioblocks_job(job)
         elif result['status'] == 'Complete':
-            print('COMPLETE')
+            bioblocks_log('COMPLETE')
             matrix_location = result['matrix_location']
             bioblocks_log('Job \'{}\' is complete! Storing matrix location of \'{}\''.format(
                 job_id, matrix_location))
@@ -164,6 +164,7 @@ def create_hca_matrix_jobs():
                 bioblocks_log('Not creating job for dataset \'{}\', it already has a matrix field'.format(
                     dataset['_id']))
             else:
+                bioblocks_log(dataset._id)
                 send_hca_matrix_job_request(dataset)
     else:
         bioblocks_log('Unable to get datasets from bioblocks: {}'.format(r.text))

@@ -4,6 +4,7 @@ import requests
 
 URL_ROOT = 'http://localhost:11037/{0}'
 jsonkey_endpoint_dict = {
+    'analyses': 'analysis',
     'datasets': 'dataset',
     'visualizations': 'visualization',
     'vignettes': 'vignette'
