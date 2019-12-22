@@ -65,12 +65,15 @@ def run_spring_preprocessing(
     # many other formats. Let me know if you want something more flexible.
     mtx_info = mminfo(mtx_file)
     bioblocks_log(mtx_info)
-    bioblocks_log(mtx_info[2])
-    if mtx_info[2] > MAX_CELLS_COUNT:
-        bioblocks_log('Not running SPRING - # of cells is {}, maximum allowed is {}'.format(mtx_info[0], MAX_CELLS_COUNT))
+    bioblocks_log('mtx rows: {}'.format(mtx_info[0]))
+    bioblocks_log('mtx cols: {}'.format(mtx_info[1]))
+    bioblocks_log('mtx entries: {}'.format(mtx_info[2]))
+    if mtx_info[1] > MAX_CELLS_COUNT:
+        bioblocks_log(
+            'Not running SPRING - # of entries is {}, maximum allowed is {}'.format(mtx_info[2], MAX_CELLS_COUNT))
         return
 
-    E = up.load_mtx(mtx_file).resize((2000, 2000))
+    # E = up.load_mtx(mtx_file).resize((2000, 2000))
     gene_list = load_genes(gene_file,
                            delimiter='\t' if gene_file.endswith('tsv') else None,
                            skip_rows=1 if gene_file.endswith('tsv') else 0)
@@ -78,7 +81,7 @@ def run_spring_preprocessing(
         gene_list = gene_list[:10000]
 
     num_rows = E.shape[0]
-
+    bioblocks('E shape: {}'.format(E.shape))
     if num_rows >= MAX_CELLS_COUNT:
         bioblocks_log('Not running SPRING - # of cells is {}, maximum allowed is {}'.format(num_rows, MAX_CELLS_COUNT))
         return
@@ -88,7 +91,7 @@ def run_spring_preprocessing(
     # Find dimension of counts matrix that matches number of genes.
     # If necessary, transpose counts matrix with
     # rows=cells and columns=genes.
-    if num_rows == len(gene_list):
+    if E.shape[0] == len(gene_list):
         E = E.T.tocsc()
 
     # Deal with gene names that are empty strings by removing them

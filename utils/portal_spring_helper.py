@@ -696,7 +696,7 @@ def make_spring_subplot(E, gene_list, save_path, base_ix=None, normalize=True, e
         bioblocks_log('---------------')
         bioblocks_log(save_path)
         print('{}/pca.csv'.format(save_path))
-        np.savetxt('{}/pca.csv'.format(save_path), np.resize(Epca, (10000, 10000)), delimiter=',', fmt='%.3f')
+        np.savez('{}/pca.csv.gz'.format(save_path), np.resize(Epca, (4000, 4000)), delimiter=',', fmt='%.3f')
         bioblocks_log('---------------')
 
         if run_doub_detector:
