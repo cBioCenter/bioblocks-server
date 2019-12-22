@@ -19,7 +19,7 @@ schema = {
         'required': False,
         'schema': {
             'type': 'string',
-            'maxlength': 32,
+            'maxlength': 64,
             'minlength': 1,
         },
         'type': 'list',
@@ -38,6 +38,20 @@ schema = {
             'type': 'uuid',
         }
     },
+    'matrixInfo': {
+        'required': False,
+        'schema': {
+            'colCount': {
+                'required': False,
+                'type': 'integer',
+            },
+            'rowCount': {
+                'required': False,
+                'type': 'integer',
+            },
+        },
+        'type': 'dict',
+    },
     'matrixLocation': {
         'maxlength': 256,
         'minlength': 1,
@@ -45,7 +59,7 @@ schema = {
         'type': 'string'
     },
     'name': {
-        'maxlength': 64,
+        'maxlength': 128,
         'minlength': 1,
         'required': True,
         'type': 'string'

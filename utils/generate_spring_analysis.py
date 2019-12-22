@@ -7,6 +7,7 @@ import zipfile
 import gzip
 import shutil
 import traceback
+from scipy.io import mminfo
 
 from bioblocks_logger import bioblocks_log
 from bioblocks_server_api_helper import (create_directory,
@@ -40,9 +41,29 @@ def patch_analysis_for_dataset(dataset, analysis_id):
     }), {'Content-type': 'application/json',
          'If-Match': dataset_etag})
 
-    bioblocks_log('Returned status from dataset PATCH: {}'.format(r.status_code))
+    bioblocks_log('Returned status from dataset PATCH of analysis: {}'.format(r.status_code))
     if r.ok is False:
         bioblocks_log(r.text)
+        return dataset_etag
+    else:
+        return json.loads(r.text)['_etag']
+
+
+def patch_matrix_info_for_dataset(dataset, mtx_info):
+    dataset_id = dataset['_id']
+    dataset_etag = dataset['_etag']
+
+    r = send_patch('{}/{}'.format('dataset', dataset_id), json.dumps({
+        'matrixInfo': {
+            'colCount': mtx_info[1],
+            'rowCount': mtx_info[0]
+        },
+    }), {'Content-type': 'application/json',
+         'If-Match': dataset_etag})
+    bioblocks_log('Returned status from dataset PATCH of matrix info: {}'.format(r.status_code))
+    if r.ok is False:
+        bioblocks_log(r.text)
+        return dataset_etag
     else:
         return json.loads(r.text)['_etag']
 
@@ -78,6 +99,7 @@ def analyze_dataset(dataset, dataset_dir):
         bioblocks_log('Error getting matrix file: {}'.format(e))
         return
 
+    # Unzip the matrix and write it to the local file system.
     tmp_dir = ''
     with zipfile.ZipFile(io.BytesIO(zip_request.content)) as z:
         z.extractall(dataset_dir)
@@ -90,8 +112,12 @@ def analyze_dataset(dataset, dataset_dir):
                 with open('{}/matrix/{}'.format(dataset_dir, final_file_name), 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
 
+        mtx_file = '{}/matrix/matrix.mtx'.format(dataset_dir)
+        mtx_info = mminfo(mtx_file)
+        dataset['_etag'] = patch_matrix_info_for_dataset(dataset, mtx_info)
+
         spring_load_preprocess.run_spring_preprocessing(
-            mtx_file='{}/matrix/matrix.mtx'.format(dataset_dir),
+            mtx_file=mtx_file,
             gene_file='{}/matrix/genes.tsv'.format(dataset_dir),
             cell_labels_file='{}/matrix/cells.tsv'.format(
                 dataset_dir),
