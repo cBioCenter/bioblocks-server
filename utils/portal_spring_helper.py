@@ -17,6 +17,7 @@ import json
 import time
 import sys
 import matplotlib as mpl
+from bioblocks_logger import bioblocks_log
 mpl.use('Agg')
 
 # USEFUL SPARSE FUNCTIONS
@@ -661,6 +662,7 @@ def make_spring_subplot(E, gene_list, save_path, base_ix=None, normalize=True, e
         # if method == anything else: z-score normalize
         # print 'Running PCA'
         num_pc = min(len(gene_filter), num_pc)
+        bioblocks_log('num_pc: {}'.format(num_pc))
         out['num_pc'] = num_pc
         Epca = get_pca(E[:, gene_filter], base_ix=base_ix,
                        numpc=num_pc, keep_sparse=sparse_pca, normalize=pca_norm)
@@ -693,11 +695,9 @@ def make_spring_subplot(E, gene_list, save_path, base_ix=None, normalize=True, e
         np.savez_compressed(save_path + '/intermediates.npz', Epca=Epca,
                             gene_filter=gene_filter, total_counts=tot_counts_final)
         
-        bioblocks_log('---------------')
-        bioblocks_log(save_path)
-        print('{}/pca.csv'.format(save_path))
-        np.savez('{}/pca.csv.gz'.format(save_path), np.resize(Epca, (4000, 4000)), delimiter=',', fmt='%.3f')
-        bioblocks_log('---------------')
+        bioblocks_log('--- SAVING PCA ---')
+        np.savetxt('{}/pca.csv'.format(save_path), Epca, delimiter=',', fmt='%.3f')
+        bioblocks_log('--- FINISHED SAVING PCA ---')
 
         if run_doub_detector:
             custom_colors['Doublet Score'] = doub_score

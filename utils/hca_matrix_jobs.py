@@ -164,7 +164,8 @@ def create_hca_matrix_jobs():
                 bioblocks_log('Not creating job for dataset \'{}\', it already has a matrix field'.format(
                     dataset['_id']))
             else:
-                bioblocks_log(dataset._id)
+                bioblocks_log('Creating job for dataset \'{}\'.'.format(
+                    dataset['_id']))
                 send_hca_matrix_job_request(dataset)
     else:
         bioblocks_log('Unable to get datasets from bioblocks: {}'.format(r.text))

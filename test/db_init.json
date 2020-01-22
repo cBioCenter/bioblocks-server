@@ -3,18 +3,22 @@
   "analyses": [
     {
       "_id": "aaaaaaaa-0000-0000-0001-a1234567890b",
+      "name": "HPC - SPRING",
       "processType": "SPRING"
     },
     {
       "_id": "aaaaaaaa-0000-0000-0002-a1234567890b",
+      "name": "HPC - TSNE",
       "processType": "TSNE"
     },
     {
       "_id": "aaaaaaaa-0000-0000-0003-a1234567890b",
+      "name": "Tabula Muris - SPRING",
       "processType": "SPRING"
     },
     {
       "_id": "aaaaaaaa-0000-0000-0004-a1234567890b",
+      "name": "Tabula Muris - TSNE",
       "processType": "TSNE"
     }
   ],

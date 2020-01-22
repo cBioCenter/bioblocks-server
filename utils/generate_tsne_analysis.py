@@ -99,7 +99,12 @@ def analyze_dataset(dataset):
 
     np.savetxt('{}/tsne_matrix.csv'.format(output_dir), Y, delimiter=',')
 
-    post_bioblocks_analysis(analysis_id, 'TSNE')
+    analysis = {
+        '_id': analysis_id,
+        'process_type': 'TSNE',
+        'name': '{} - {}'.format(dataset['name'], 'TSNE')
+    }
+    post_bioblocks_analysis(analysis)
     patch_analysis_for_dataset(dataset, analysis_id)
 
 

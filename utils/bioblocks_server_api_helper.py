@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import shutil
 import time
 
 from bioblocks_logger import bioblocks_log
@@ -79,11 +80,12 @@ def send_post(endpoint, data, headers={'Content-type': 'application/json'}, time
     return r
 
 
-def post_bioblocks_analysis(analysis_id, process_type):
-    bioblocks_log('Creating analysis with analysis_id=\'{}\''.format(analysis_id))
+def post_bioblocks_analysis(analysis):
+    bioblocks_log('Creating analysis with analysis_id=\'{}\''.format(analysis['_id']))
     r = send_post('analysis', json.dumps({
-        '_id': analysis_id,
-        'processType': process_type,
+        '_id': analysis['_id'],
+        'name': analysis['name'],
+        'processType': analysis['process_type'],
     }), {'Content-type': 'application/json'})
 
     bioblocks_log('Returned status from bioblocks analysis request: \'{}\''.format(r.status_code))
@@ -94,6 +96,7 @@ def post_bioblocks_analysis(analysis_id, process_type):
 
 
 def create_directory(new_dir):
+    bioblocks_log('Creating directory \'{}\''.format(new_dir))
     try:
         os.mkdir(new_dir)
         bioblocks_log('Created new directory \'{}\''.format(new_dir))
@@ -102,8 +105,9 @@ def create_directory(new_dir):
 
 
 def delete_directory(old_dir):
+    bioblocks_log('Deleting directory \'{}\''.format(old_dir))
     try:
-        os.rmdir(old_dir)
+        shutil.rmtree(old_dir)
         bioblocks_log('Deleted directory \'{}\''.format(old_dir))
     except Exception:
         bioblocks_log('Directory \'{}\' doesn\'t exist, skipping!'.format(old_dir))

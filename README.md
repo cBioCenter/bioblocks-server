@@ -68,3 +68,12 @@ ExecStart=/home/chell/venv/bioblocks-server/$
 [Install]
 WantedBy=multi-user.target
 ```
+
+```sh
+# Open shell and `cd` into local bioblocks-server repo.
+scp -r files/datasets/bbdeeded-0000-0000-0001-a1234567890b files/datasets/bbdeeded-0000-0000-0002-a1234567890b chell@155.52.47.138:~/git/bioblocks-server/files/datasets
+ssh chell@155.52.47.138
+cd git/bioblocks-server
+pipenv shell
+python test/db_populate.py
+```
