@@ -152,8 +152,8 @@ def run_spring_analysis(dataset_dir, dataset_id, dataset, MAX_CELLS_COUNT, tmp_d
                 'process_type': 'SPRING',
                 'name': '{} - {}'.format(dataset['name'], get_numeric_shorthand_suffix(subsample_range))
             }
-            post_bioblocks_analysis(analysis)
-            dataset['_etag'] = patch_analysis_for_dataset(dataset, analysis_id)
+            # post_bioblocks_analysis(analysis)
+            # dataset['_etag'] = patch_analysis_for_dataset(dataset, analysis_id)
         except Exception as e:
             bioblocks_log('Error with compression of matrix file: {}'.format(e))
             return
@@ -202,7 +202,7 @@ def analyze_dataset(dataset, dataset_dir, MAX_CELLS_COUNT=500000):
                 dataset_id))
             return
 
-    if (matrix_location.endswith('.zip') is True or ends_with_mtx is True):
+    if (ends_with_zip is True or ends_with_mtx is True):
         zip_request = session.get(matrix_location)
         zip_location = zip_request.content
     else:
@@ -220,8 +220,8 @@ def analyze_dataset(dataset, dataset_dir, MAX_CELLS_COUNT=500000):
             with gzip.open(full_path, 'rb') as f_in:
                 with open('{}/matrix/{}'.format(dataset_dir, final_file_name), 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
-        run_spring_analysis(dataset_dir=dataset_dir, dataset_id=dataset_id,
-                            dataset=dataset, MAX_CELLS_COUNT=MAX_CELLS_COUNT, tmp_dir=tmp_dir)
+    run_spring_analysis(dataset_dir=dataset_dir, dataset_id=dataset_id,
+                        dataset=dataset, MAX_CELLS_COUNT=MAX_CELLS_COUNT, tmp_dir=tmp_dir)
 
 
 def start_analysis():
