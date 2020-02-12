@@ -18,6 +18,7 @@ from bioblocks_server_api_helper import (create_directory,
                                          send_patch)
 from portal_spring_helper import load_genes
 from format_helper import get_numeric_shorthand_suffix
+from large_matrix_parser import create_subsampled_matrix
 
 from datetime import datetime
 from requests.adapters import HTTPAdapter
@@ -93,13 +94,8 @@ def run_spring_analysis(dataset_dir, dataset_id, dataset, MAX_CELLS_COUNT, tmp_d
     gene_file = '{}/matrix/genes.tsv'.format(dataset_dir)
     bioblocks_log('mtx_file = {}'.format(mtx_file))
     mtx_info = mminfo(mtx_file)
-
-    mtx_info = mminfo(mtx_file)
     num_rows = mtx_info[0]
     num_cols = mtx_info[1]
-    bioblocks_log('mtx rows: {}'.format(num_rows))
-    bioblocks_log('mtx cols: {}'.format(num_cols))
-    bioblocks_log('mtx entries: {}'.format(mtx_info[2]))
     bioblocks_log(mtx_info)
 
     gene_list = load_genes(gene_file,
@@ -115,13 +111,12 @@ def run_spring_analysis(dataset_dir, dataset_id, dataset, MAX_CELLS_COUNT, tmp_d
         num_cells = num_rows
         sample_rows = True
 
-    if num_cells >= MAX_CELLS_COUNT:
-        bioblocks_log(
-            'Not running SPRING - {} cells detected with max allowed of {}'.format(num_cells, MAX_CELLS_COUNT
-                                                                                   ))
-        return
-    else:
-        subsample_ranges = get_cell_subsample_ranges(num_cells)
+    if num_cells > MAX_CELLS_COUNT:
+        bioblocks_log('mtx_file: {}'.format(mtx_file))
+        create_subsampled_matrix(mtx_file, gene_file, MAX_CELLS_COUNT)
+        num_cells = MAX_CELLS_COUNT
+
+    subsample_ranges = get_cell_subsample_ranges(num_cells)
 
     bioblocks_log('Attempting to run SPRING with subsample ranges {}'.format(subsample_ranges))
 
@@ -176,7 +171,7 @@ def run_spring_analysis(dataset_dir, dataset_id, dataset, MAX_CELLS_COUNT, tmp_d
         analysis_id, dataset_id, end_time - start_time))
 
 
-def analyze_dataset(dataset, dataset_dir, MAX_CELLS_COUNT=500000):
+def analyze_dataset(dataset, dataset_dir, MAX_CELLS_COUNT=200000):
     dataset_analyses = dataset['analyses']
     dataset_id = dataset['_id']
     matrix_location = dataset['matrixLocation']
@@ -202,7 +197,7 @@ def analyze_dataset(dataset, dataset_dir, MAX_CELLS_COUNT=500000):
                 dataset_id))
             return
 
-    if (matrix_location.endswith('.zip') is True or ends_with_mtx is True):
+    if (ends_with_zip is True or ends_with_mtx is True):
         zip_request = session.get(matrix_location)
         zip_location = zip_request.content
     else:
@@ -220,15 +215,11 @@ def analyze_dataset(dataset, dataset_dir, MAX_CELLS_COUNT=500000):
             with gzip.open(full_path, 'rb') as f_in:
                 with open('{}/matrix/{}'.format(dataset_dir, final_file_name), 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
-        run_spring_analysis(dataset_dir=dataset_dir, dataset_id=dataset_id,
-                            dataset=dataset, MAX_CELLS_COUNT=MAX_CELLS_COUNT, tmp_dir=tmp_dir)
+    run_spring_analysis(dataset_dir=dataset_dir, dataset_id=dataset_id,
+                        dataset=dataset, MAX_CELLS_COUNT=MAX_CELLS_COUNT, tmp_dir=tmp_dir)
 
 
 def start_analysis():
-    # dataset_dir = 'files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45'
-    # analyze_dataset('091cf39b-01bc-42e5-9437-f419a66c8a45', dataset_dir)
-    # return
-
     dataset_url = 'dataset?embedded={"analyses":1}'
     r = send_get(dataset_url)
     if (r.ok is False):
