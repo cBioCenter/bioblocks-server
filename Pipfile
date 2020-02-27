@@ -33,7 +33,7 @@ LC_ALL = "en_US.UTF-8"
 LANG = "en_US.UTF-8"
 
 [requires]
-python_version = "3"
+python_version = "3.7"
 
 [scripts]
 ci_test = "pytest --junitxml=dist/test-reports/junit.xml --disable-warnings --cov=src --cov-report xml:dist/cov.xml"
