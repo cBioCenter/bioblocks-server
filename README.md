@@ -1,9 +1,13 @@
 # Bioblocks Server
 
+Bioblocks Server is the backend component for running analyses on data from the [Human Cell Atlas](https://www.humancellatlas.org/) and making them available via REST API.
+
+[![CircleCI](https://circleci.com/gh/cBioCenter/bioblocks-server.svg?style=shield)](https://circleci.com/gh/cBioCenter/bioblocks-server)[![GitHub license](https://img.shields.io/github/license/cBioCenter/bioblocks-portal.svg?style=flat)](https://github.com/cBioCenter/bioblocks-server/blob/master/LICENSE)[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)[![Coverage Status](https://img.shields.io/codecov/c/github/cBioCenter/bioblocks-server/master.svg)](https://codecov.io/gh/cBioCenter/bioblocks-server/branch/master)
+
 <!-- TOC -->
 
 - [Bioblocks Server](#bioblocks-server)
-  - [Installation on OSX](#installation-on-osx)
+  - [Installation](#installation)
   - [Running Locally (requires installation - see below)](#running-locally-requires-installation---see-below)
   - [Running in Production](#running-in-production)
     - [Service File](#service-file)
@@ -15,9 +19,11 @@
 
 <!-- /TOC -->
 
-## Installation on OSX
+## Installation
 
-1. Install homebrew, python3, pipenv, circleci
+1. Install Dependencies
+
+   OSX
 
    ```sh
    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -30,7 +36,16 @@
    brew install python3 pipenv circleci
    ```
 
-2. Clone repo and setup python.
+   Linux
+
+   ```sh
+   sudo apt-get update && sudo apt-get install -y cmake &&
+   sudo pip install --user pipenv &&
+   pipenv install -d &&
+   pipenv sync
+   ```
+
+2. Clone repo and install python-specific dependencies.
 
    ```sh
    git clone git@github.com:cBioCenter/bioblocks-portal.git
@@ -70,27 +85,29 @@ pipenv run start
 
 ## Running in Production
 
+⚠️ Currently the documentation and configuration for bioblocks-server assumes the production environment is CentOS 7. ⚠️
+
 ### Service File
 
 In addition to the setup mentioned in [Installation](#installation), for production you will want to setup bioblocks-server as a System D process. Here is an example `service file`:
 
 ```service
 [Unit]
-Description=uWSGI instance to serve bioblock$
+Description=uWSGI instance to serve bioblocks-server
 After=network.target
 
 [Service]
 User=chell
 Group=nginx
-WorkingDirectory=/home/chell/git/bioblocks-s$
-Environment="PATH=/home/chell/venv/bioblocks$
-ExecStart=/home/chell/venv/bioblocks-server/$
+WorkingDirectory=/home/chell/git/bioblocks-server
+Environment="PATH=/home/chell/venv/bioblocks-server/bin"
+ExecStart=/home/chell/venv/bioblocks-server/bin/uwsgi --ini src/bioblocks-server.ini
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-More info regarding service files can be found [here](https://www.freedesktop.org/software/systemd/man/systemd.service.html)
+This file should be saved as /etc/systemd/system/bioblocks-server.service. More info regarding service files can be found [here](https://www.freedesktop.org/software/systemd/man/systemd.service.html)
 
 ### (Re)Starting the service
 
