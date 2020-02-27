@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/bioblocks-server
     docker:
-      - image: circleci/python:3
+      - image: circleci/python:3.8
       - image: circleci/mongo:4.0.3
         environment:
           PIPENV_VENV_IN_PROJECT: "1"
