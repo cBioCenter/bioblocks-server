@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/bioblocks-server
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3
       - image: circleci/mongo:4.0.3
         environment:
           PIPENV_VENV_IN_PROJECT: "1"
@@ -12,8 +12,7 @@ jobs:
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
-      - restore_cache: 
+      - restore_cache:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
           command: |
@@ -26,7 +25,6 @@ jobs:
           paths:
             - ".venv"
             - "/usr/local/bin"
-            - "/usr/local/lib/python3.7/site-packages"
       - run:
           name: Lint Project
           command: |
@@ -38,4 +36,4 @@ jobs:
       - store_test_results:
           path: dist/test-reports
       - store_artifacts:
-          path: dist/test-reports    
+          path: dist/test-reports
