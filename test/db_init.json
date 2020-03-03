@@ -113,11 +113,11 @@
       "authors": ["Nicholas Gauthier", "Drew Diamantoukos"],
       "dataset": "bbdeeded-0000-0000-0001-a1234567890b",
       "icon": "assets/icons/example_HPC_spring-tsne-anatomogram.png",
-      "name": "HPC - SPRING vs UMAP",
-      "summary": "Example interaction between SPRING, tSNE and Anatomogram visualization on a small dataset.",
+      "name": "HPC - SPRING vs tSNE",
+      "summary": "Example interaction between SPRING and tSNE  visualization on a small dataset.",
       "visualizations": [
         "bbfacade-0000-0000-0001-a1234567890b",
-        "bbfacade-0000-0000-0004-a1234567890b"
+        "bbfacade-0000-0000-0003-a1234567890b"
       ]
     },
     {

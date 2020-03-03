@@ -1,6 +1,6 @@
 # Bioblocks Server
 
-Bioblocks Server is the backend component for running analyses on data from the [Human Cell Atlas](https://www.humancellatlas.org/) and making them available via REST API.
+Bioblocks Server is the backend component for making data from the [Human Cell Atlas](https://www.humancellatlas.org/), and analyses derived from them, available via REST API.
 
 The server utilizes [Eve](https://docs.python-eve.org/en/stable/) as a REST framework with [Cerberus](https://docs.python-cerberus.org/en/stable/) for schema validation. The top level collections are found inside `src/bb_schema`.
 
@@ -14,12 +14,13 @@ The server utilizes [Eve](https://docs.python-eve.org/en/stable/) as a REST fram
   - [Running in Production](#running-in-production)
     - [Service File](#service-file)
     - [(Re)Starting the service](#restarting-the-service)
-  - [Datasets](#datasets)
-    - [Sample Dataset Creation](#sample-dataset-creation)
-    - [Folder Structure](#folder-structure)
-  - [Pulling Data from the HCA](#pulling-data-from-the-hca)
+  - [Data](#data)
+    - [Manual Database Population](#manual-database-population)
+    - [Manual Analysis Invocation](#manual-analysis-invocation)
+  - [Process Scripts](#process-scripts)
     - [Customizing the cron job](#customizing-the-cron-job)
     - [Run Cron Job As Background Process](#run-cron-job-as-background-process)
+  - [Folder Structure](#folder-structure)
 
 <!-- /TOC -->
 
@@ -113,16 +114,15 @@ Make sure you move the socket file if restarting the server manually!
 cd bioblocks-server
 sudo systemctl restart bioblocks-server.service
 mv bioblocks-server.sock ./src/
-
 ```
 
-## Datasets
+## Data
 
-### Sample Dataset Creation
+There are two ways to fill the server with data - Manually populating it with a `json` file containing the entires to enter, or via our [process scripts](#process-scripts)
 
-For easily getting started, the file `test/db_init.json` and `test/db_populate.py` exist to contain and upload example data, respectively, to mongo.
+### Manual Database Population
 
-Here is a _**truncated**_ example of the json:
+This method requires creating a json file with the entires to be inserted into the database. Consider the following, saved as `custom_file.json`:
 
 ```json
 {
@@ -140,6 +140,13 @@ Here is a _**truncated**_ example of the json:
       "authors": ["Caleb Weinreb", "Samuel Wolock", "Allon Klein"],
       "name": "Hematopoietic Progenitor Cells",
       "species": "homo_sapiens"
+   },
+   {
+      "_id": "091cf39b-01bc-42e5-9437-f419a66c8a45",
+      "analyses": [],
+      "matrixLocation": "files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45/matrix/matrix.mtx"
+      "authors": [],
+      "name": "Human Hematopoietic Profiling"
     }
   ],
   "visualizations": [
@@ -182,69 +189,48 @@ Here is a _**truncated**_ example of the json:
 }
 ```
 
-To upload a json file, invoke the db_populate.py script, optionally followed by the location of the json file. If none is provided, `test/db_init.json` is used.
+```sh
+pipenv shell
+python test/db_populate.py custom_file.json
+```
 
-The usage of `pipenv shell` creates a virtualenv shell for more consistent python script usage for this project.
+This will populate the mongo database with that data. The usage of `pipenv shell` creates a virtualenv shell for more consistent python script usage for this project.
+
+If you run this command, the default file of `test/db_init.json` will be used:
 
 ```sh
 pipenv shell
 python test/db_populate.py
-python test/db_populate.py custom_file.json
 ```
 
-### Folder Structure
+### Manual Analysis Invocation
 
-Our datasets are stored in the following structure:
+Consider the following snippet from the `json` above:
 
-```text
-files
-|- datasets
-|  |- {dataset_uuid}
-|  |  |- analyses
-|  |  |  |- {analysis_uuid}
-|  |  |  |  | analyses file/folder 1
-|  |  |  |  | analyses file/folder 2
-|  |  |  |  ...
+```json
+"datasets": [
+   {
+      "_id": "091cf39b-01bc-42e5-9437-f419a66c8a45",
+      "analyses": [],
+      "matrixLocation": "files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45/matrix/matrix.mtx"
+      "authors": [],
+      "name": "Human Hematopoietic Profiling"
+    }
+  ],
 ```
 
-Analyses file refers to analysis-specific files output by their respective jobs.
+The value for matrixLocation is used by our [process scripts](#process-scripts) when running an analysis. When data is obtained from the HCA, this is handled by a process script for interacting with the HCA matrix service.
+**When manually inserting data, you will need to make sure the files exist yourself!** This example `091cf39b-01bc-42e5-9437-f419a66c8a45` is included in the repo, though.
 
-For SPRING, the folder looks like:
+This matrix can be in one of 3 forms: A raw `.mtx` file, a `.zip`, or a `.mtx.gz` - Extraction, if needed, is handled automatically.
 
-```text
-|- {analysis_uuid}
-|  |- {analysis_name}
-|  |  |- categorical_coloring_data.json
-|  |  |- clone_map.json
-|  |  |- coordinates.txt
-|  |  |- graph_data.json
-|  |  |- pca.csv
-|  |  |- cell_filter.npy
-|  |  |- color_data_gene_sets.csv
-|  |  |- edges.csv
-|  |  |- louvain_clusters.npy
-|  |  |- run_info.json
-|  |  |- cell_filter.txt.npy
-|  |  |- color_stats.json
-|  |  |- genes.txt
-|  |  |- mutability.txt
-```
+## Process Scripts
 
-For T-SNE, the folder looks like:
-
-```text
-|- {analysis_uuid}
-|  |- tsne_matrix.csv
-|  |- tsne_output.csv
-```
-
-## Pulling Data from the HCA
-
-Inside the `utils` folder are a number of scripts to do the following:
+Inside the `utils` folder are a number of process scripts to do the following:
 
 - Insert datasets from the HCA into bioblocks-server.
-- Run matrix jobs on all datasets inside bioblocks-server.
-- Run SPRING on all datasets..
+- Communicate with the HCA Matrix Service to create / check on jobs for matrix creation.
+- Run SPRING on all datasets.
 - Run T-SNE on all datasets.
 
 This process can be manually started by running:
@@ -258,7 +244,7 @@ The entry point for this is the file `utils/bioblocks_server_cron_job.py`.
 
 ### Customizing the cron job
 
-Currently the mechanism to switch which of the 4 processes run requires some manual editing.. In the aforementioned bioblocks_server_cron_job is the line:
+Currently the mechanism to switch which of the 4 processes scripts run requires some manual editing. In the aforementioned `bioblocks_server_cron_job.py` is the line:
 
 ```python
 scripts = ['hca_get_bundles', 'hca_matrix_jobs', 'generate_spring_analysis', 'generate_tsne_analysis']
@@ -294,4 +280,51 @@ cd bioblocks-server
 ssh user@your.ip.address.here
 cd bioblocks-server
 nohup pipenv run cron_job &
+```
+
+## Folder Structure
+
+Our datasets are stored in the following structure:
+
+```text
+bioblocks-server
+|- files
+|  |- datasets
+|  |  |- {dataset_uuid}
+|  |  |  |- analyses
+|  |  |  |  |- {analysis_uuid}
+|  |  |  |  |  | analyses file/folder 1
+|  |  |  |  |  | analyses file/folder 2
+|  |  |  |  |  ...
+```
+
+Analyses file refers to the output of that analysis.
+
+For SPRING, the folder looks like:
+
+```text
+|- {analysis_uuid}
+|  |- {analysis_name}
+|  |  |- categorical_coloring_data.json
+|  |  |- clone_map.json
+|  |  |- coordinates.txt
+|  |  |- graph_data.json
+|  |  |- pca.csv
+|  |  |- cell_filter.npy
+|  |  |- color_data_gene_sets.csv
+|  |  |- edges.csv
+|  |  |- louvain_clusters.npy
+|  |  |- run_info.json
+|  |  |- cell_filter.txt.npy
+|  |  |- color_stats.json
+|  |  |- genes.txt
+|  |  |- mutability.txt
+```
+
+For T-SNE, the folder looks like:
+
+```text
+|- {analysis_uuid}
+|  |- tsne_matrix.csv
+|  |- tsne_output.csv
 ```
