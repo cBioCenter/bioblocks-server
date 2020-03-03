@@ -76,6 +76,9 @@ def delete_bioblocks_job(job):
 
 
 def handle_hca_matrix_job_status(job):
+    """
+    Process a matrix job which can either succeed, fail, or still be in progress.
+    """
     r = session.get(
         url=job['link'],
         timeout=None
@@ -172,6 +175,9 @@ def create_hca_matrix_jobs():
 
 
 def check_bioblocks_jobs():
+    """
+    Determine if each job has either finished or taken too long to finish.
+    """
     r = send_get('job')
     jobs = json.loads(r.text)['_items']
     for job in jobs:

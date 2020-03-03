@@ -18,6 +18,7 @@ The server utilizes [Eve](https://docs.python-eve.org/en/stable/) as a REST fram
     - [Sample Dataset Creation](#sample-dataset-creation)
     - [Folder Structure](#folder-structure)
   - [Pulling Data from the HCA](#pulling-data-from-the-hca)
+    - [Customizing the cron job](#customizing-the-cron-job)
     - [Run Cron Job As Background Process](#run-cron-job-as-background-process)
 
 <!-- /TOC -->
@@ -255,6 +256,8 @@ pipenv run cron_job
 
 The entry point for this is the file `utils/bioblocks_server_cron_job.py`.
 
+### Customizing the cron job
+
 Currently the mechanism to switch which of the 4 processes run requires some manual editing.. In the aforementioned bioblocks_server_cron_job is the line:
 
 ```python
@@ -265,6 +268,21 @@ Each string represents a script that does, well, what it says on the tin. So if 
 
 ```python
 scripts = ['hca_get_bundles', 'hca_matrix_jobs']
+```
+
+If you'd like to run the scripts on only a limited amount of datasets, that will unfortunately require more in-depth script editing at the moment. The scripts iterate over all the datasets like so:
+
+```python
+  datasets = json.loads(r.text)['_items']
+  for dataset in datasets:
+     process(dataset)
+```
+
+Running on the first dataset only, then, could be:
+
+```python
+   dataset = json.loads(r.text)['_items'][0]
+   process(dataset)
 ```
 
 ### Run Cron Job As Background Process
