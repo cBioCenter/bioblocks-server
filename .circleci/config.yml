@@ -13,8 +13,8 @@ jobs:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.8/site-packages
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages || true
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages || true
       - restore_cache:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
