@@ -1,6 +1,8 @@
 #!/usr/local/bin/python
 import json
 import requests
+import sys
+
 
 URL_ROOT = 'http://localhost:11037/{0}'
 jsonkey_endpoint_dict = {
@@ -10,8 +12,13 @@ jsonkey_endpoint_dict = {
     'vignettes': 'vignette'
 }
 
+if (len(sys.argv) >= 2):
+    json_file = str(sys.argv[1])
+else:
+    json_file = 'test/db_init.json'
+
 data = None
-with open('test/db_init.json') as f:
+with open(json_file) as f:
     data = json.load(f)
 
 for jsonkey in jsonkey_endpoint_dict:
