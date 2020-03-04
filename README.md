@@ -15,10 +15,10 @@ The server utilizes [Eve](https://docs.python-eve.org/en/stable/) as a REST fram
     - [Service File](#service-file)
     - [(Re)Starting the service](#restarting-the-service)
   - [Data](#data)
-    - [Manual Database Population](#manual-database-population)
-    - [Manual Analysis Invocation](#manual-analysis-invocation)
+    - [Manual Mongo Data Population](#manual-mongo-data-population)
+    - [Manual Analysis Data Population](#manual-analysis-data-population)
   - [Process Scripts](#process-scripts)
-    - [Customizing the cron job](#customizing-the-cron-job)
+    - [Customizing the Process Scripts](#customizing-the-process-scripts)
     - [Run Cron Job As Background Process](#run-cron-job-as-background-process)
   - [Folder Structure](#folder-structure)
 
@@ -50,11 +50,12 @@ The server utilizes [Eve](https://docs.python-eve.org/en/stable/) as a REST fram
    pipenv sync
    ```
 
-2. Clone repo and install python-specific dependencies.
+2. Clone repo, initialize SPRING repository, and install python-specific dependencies.
 
    ```sh
    git clone https://github.com/cBioCenter/bioblocks-server.git
    cd bioblocks-server
+   git submodule update --init
    pipenv install
    pipenv shell
    pip install multicoretsne #Fails if in the Pipfile, so need to run in shell.
@@ -118,11 +119,13 @@ mv bioblocks-server.sock ./src/
 
 ## Data
 
-There are two ways to fill the server with data - Manually populating it with a `json` file containing the entires to enter, or via our [process scripts](#process-scripts)
+For bioblocks-server, data is stored in one of two locations: Mongo for metadata, and on the filesystem for the raw and analyzed project data.
 
-### Manual Database Population
+### Manual Mongo Data Population
 
-This method requires creating a json file with the entires to be inserted into the database. Consider the following, saved as `custom_file.json`:
+There are two ways to fill the mongo database - Manually populating it with a `json` file containing the entires to enter, or via our [process scripts](#process-scripts).
+
+The former method requires creating a json file with the entires to be inserted. Consider the following, saved as `custom_file.json`:
 
 ```json
 {
@@ -140,11 +143,11 @@ This method requires creating a json file with the entires to be inserted into t
       "authors": ["Caleb Weinreb", "Samuel Wolock", "Allon Klein"],
       "name": "Hematopoietic Progenitor Cells",
       "species": "homo_sapiens"
-   },
-   {
+    },
+    {
       "_id": "091cf39b-01bc-42e5-9437-f419a66c8a45",
       "analyses": [],
-      "matrixLocation": "files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45/matrix/matrix.mtx"
+      "matrixLocation": "files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45/matrix/matrix.mtx",
       "authors": [],
       "name": "Human Hematopoietic Profiling"
     }
@@ -203,7 +206,9 @@ pipenv shell
 python test/db_populate.py
 ```
 
-### Manual Analysis Invocation
+### Manual Analysis Data Population
+
+Invoking an analysis is done via our [process scripts](#process-scripts), regardless of how data was inserted into mongo. This means if you manually want to start an analysis, you will need to ensure it exists correctly on the filesystem.
 
 Consider the following snippet from the `json` above:
 
@@ -212,7 +217,7 @@ Consider the following snippet from the `json` above:
    {
       "_id": "091cf39b-01bc-42e5-9437-f419a66c8a45",
       "analyses": [],
-      "matrixLocation": "files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45/matrix/matrix.mtx"
+      "matrixLocation": "files/datasets/091cf39b-01bc-42e5-9437-f419a66c8a45/matrix/matrix.mtx",
       "authors": [],
       "name": "Human Hematopoietic Profiling"
     }
@@ -223,6 +228,8 @@ The value for matrixLocation is used by our [process scripts](#process-scripts) 
 **When manually inserting data, you will need to make sure the files exist yourself!** This example `091cf39b-01bc-42e5-9437-f419a66c8a45` is included in the repo, though.
 
 This matrix can be in one of 3 forms: A raw `.mtx` file, a `.zip`, or a `.mtx.gz` - Extraction, if needed, is handled automatically.
+
+You will likely want to take a look at [Customizing the Process Scripts](#customizing-the-process-scripts) if you want to only run a specific analysis.
 
 ## Process Scripts
 
@@ -242,7 +249,7 @@ pipenv run cron_job
 
 The entry point for this is the file `utils/bioblocks_server_cron_job.py`.
 
-### Customizing the cron job
+### Customizing the Process Scripts
 
 Currently the mechanism to switch which of the 4 processes scripts run requires some manual editing. In the aforementioned `bioblocks_server_cron_job.py` is the line:
 
@@ -284,7 +291,7 @@ nohup pipenv run cron_job &
 
 ## Folder Structure
 
-Our datasets are stored in the following structure:
+The folder structure of our raw and analyzed project data is stored as the following:
 
 ```text
 bioblocks-server
@@ -328,3 +335,5 @@ For T-SNE, the folder looks like:
 |  |- tsne_matrix.csv
 |  |- tsne_output.csv
 ```
+
+If you are manually populating mongo, **you must create this directory structure** - The process scripts, however, handle this automatically.
