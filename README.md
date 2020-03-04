@@ -15,8 +15,8 @@ The server utilizes [Eve](https://docs.python-eve.org/en/stable/) as a REST fram
     - [Service File](#service-file)
     - [(Re)Starting the service](#restarting-the-service)
   - [Data](#data)
-    - [Manual Mongo Data Population](#manual-mongo-data-population)
-    - [Manual Analysis Data Population](#manual-analysis-data-population)
+    - [Manually Populating Mongo Data](#manually-populating-mongo-data)
+    - [Manual Populating Analysis Data](#manual-populating-analysis-data)
   - [Process Scripts](#process-scripts)
     - [Customizing the Process Scripts](#customizing-the-process-scripts)
     - [Run Cron Job As Background Process](#run-cron-job-as-background-process)
@@ -121,7 +121,7 @@ mv bioblocks-server.sock ./src/
 
 For bioblocks-server, data is stored in one of two locations: Mongo for metadata, and on the filesystem for the raw and analyzed project data.
 
-### Manual Mongo Data Population
+### Manually Populating Mongo Data
 
 There are two ways to fill the mongo database - Manually populating it with a `json` file containing the entires to enter, or via our [process scripts](#process-scripts).
 
@@ -197,7 +197,7 @@ pipenv shell
 python test/db_populate.py custom_file.json
 ```
 
-This will populate the mongo database with that data. The usage of `pipenv shell` creates a virtualenv shell for more consistent python script usage for this project.
+This will populate the mongo database with that metadata. The usage of `pipenv shell` creates a virtualenv shell for more consistent python script usage for this project.
 
 If you run this command, the default file of `test/db_init.json` will be used:
 
@@ -206,9 +206,9 @@ pipenv shell
 python test/db_populate.py
 ```
 
-### Manual Analysis Data Population
+### Manual Populating Analysis Data
 
-Invoking an analysis is done via our [process scripts](#process-scripts), regardless of how data was inserted into mongo. This means if you manually want to start an analysis, you will need to ensure it exists correctly on the filesystem.
+Invoking an analysis is done via our [process scripts](#process-scripts), regardless of how metadata was inserted into mongo. This means if you manually want to start an analysis, you will need to ensure the raw matrix data exists in the correct location on the filesystem.
 
 Consider the following snippet from the `json` above:
 
